@@ -75,12 +75,11 @@
            >
 
            <div class="gridBlock">
-   					<h2>{{chartOptionsTitle[index]}}</h2>
-
-   					<div class="echarts-react">
-						<ECharts :options="chartOptions[index]" ></ECharts>
-   					</div>
- 			</div>
+   				   <h2>{{chartOptionsTitle[index]}}</h2>
+                <div class="echarts-react">
+						      <chart :options="chartOptions[index]" ></chart>
+   					    </div>
+ 			    </div>
 
         </grid-item>
 
@@ -96,11 +95,18 @@
            >
 
            <div class="gridBlock">
-   					<h2>{{chartOptionsTitle[5]}}</h2>
-   					<div class="echarts-react">
-						<ECharts :options="chartOptions[5]"></ECharts>
-   					</div>
+             <div class="gridBlockMap">
+               <h2>{{chartOptionsTitle[5]}}</h2>
+               <el-tabs v-model="activeName2" type="card" @tab-click="handleClick" style="float:left;margin-top:10px">
+                  <el-tab-pane label="监控密度" name="first"></el-tab-pane>
+                  <el-tab-pane label="变更密度" name="second"></el-tab-pane>
+                  <el-tab-pane label="风险密度" name="third"></el-tab-pane>
+              </el-tabs>
+             </div>
 
+   					  <div class="echarts-react">
+						    <ECharts :options="chartOptions[5]"></ECharts>
+   					  </div>
  				   </div>
 
         </grid-item>
@@ -150,14 +156,17 @@ import {
 
   //布局
   import {GridLayout,GridItem} from 'vue-grid-layout';
-  import ECharts from 'vue-echarts/components/ECharts.vue'
 
+  import ECharts from 'vue-echarts/components/ECharts.vue'
+  import chart from 'Vue-eCharts';
+//绘制图表
   import 'echarts/lib/chart/bar'
   import 'echarts/lib/chart/pie'
   import 'echarts/lib/chart/line'
   import 'echarts/lib/chart/radar'
   import 'echarts/lib/chart/map'
-
+  import 'echarts/lib/component/legend'
+  import 'echarts/lib/component/visualMap'
   import 'echarts/lib/component/polar'
   import '../../common/data/china';
 
@@ -165,7 +174,8 @@ import {
     components:{
       GridLayout,
       GridItem,
-	    ECharts
+	    chart,
+      ECharts
     },
     props:['initOptions'],
     data () {
@@ -196,7 +206,9 @@ import {
         },
 
         chartOptions: [],
-        chartOptionsTitle:['按行业分类企业数量TOP10','整体概览','企业注册资本','按企业注册时间查询总量','指标概要','变更趋势']
+        chartOptionsTitle:['按行业分类企业数量TOP10','整体概览','企业注册资本','按企业注册时间查询总量','指标概要','变更趋势'],
+
+        activeName2: 'first'
         // autoResize:true
       }
 
@@ -245,10 +257,29 @@ import {
     		localStorage.setItem('uiState', JSON.stringify(layouts));
     	},
 
+
+//密度切换
+      handleClick(tab, event) {
+        console.log(tab.index, event);
+        switch (tab.index) {
+          case 0:
+            console.log(tab.label);
+          break;
+          case 1:
+            console.log(tab.label);
+          break;
+          case 2:
+            console.log(tab.label);
+          break;
+          default:
+            console.log(tab.label);
+
+        }
+      },
+
 //数据请求
       // 整体概览 1
     	getLatestChangeStat(){
-console.log(12);
     		getLatestChangeStat( ({success, statResult})=>{
 
     			if(!success) return;
@@ -351,6 +382,9 @@ console.log(12);
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style type="text/css" lang="scss" scoped>
+section{
+  margin: 0 -10px;
+}
 .row{
   margin: 0;
   padding:10px;
@@ -452,5 +486,22 @@ console.log(12);
     color: #5E7386;
   }
 }
+.gridBlockMap{
+  height: 56px;
+  h2{
+    float: left;
+    margin-right: 50px;
+  }
 
+}
+.echarts{
+  width:100% !important;
+
+  div{
+    width:100% !important;
+  }
+  canvas{
+    width:100% !important;
+  }
+}
 </style>

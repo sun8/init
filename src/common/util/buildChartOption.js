@@ -1,4 +1,5 @@
 
+import chart from 'Vue-eCharts';
 // 最近的更新状态，整体概览
 
 export function buildLatestChangeOption(data) {
@@ -20,8 +21,7 @@ export function buildLatestChangeOption(data) {
 	let riskN = `本期风险  ${risk}`;
 
 	return {
-		angleAxis: {
-		    },
+		angleAxis: {},
 
 		    radiusAxis: {
 		        type: 'category',
@@ -29,11 +29,11 @@ export function buildLatestChangeOption(data) {
 		        z: 10
 		    },
 		    polar: {
-					center: ['55%', '45%'],
-					radius : '60%',
+					center: ['55%', '40%'],
+					radius : '65%',
 		    },
-				center: ['55%', '45%'],
-				radius : '60%',
+				center: ['55%', '40%'],
+				radius : '65%',
 		    series: [{
 		        type: 'bar',
 		        data: [monitor, 0,0,0].reverse(),
@@ -65,10 +65,20 @@ export function buildLatestChangeOption(data) {
 
 		    legend: {
 		        show: true,
-						orient: 'vertical',
-						x: 'left',
+						// orient: 'vertical',
+						// x: 'left',
+						bottom:12,
 		        data: [monitorN, newMonitorN, changeN, riskN]
-		    }
+		    },
+
+				color:[
+					'#5B9BD1',
+					'#4DB3A4',
+					'#A276A4',
+			  	'#F36A5A',
+
+
+			  ]
 	}
 }
 
@@ -261,7 +271,6 @@ const renderChangeLineOption = function (xAxisData,changeData,changeAllData) {
 				});
 				compareArr.sort(function(a,b){return a-b;});
 				var maxRadar = compareArr[compareArr.length -1];
-
 				var chart = echarts.init(document.getElementById('radar-point-panel'));
 				var option = _prepareChartOption(legendData,eleRect,maxRadar,maxRadar,maxRadar);
 				chart.setOption(option);
@@ -458,25 +467,26 @@ const renderChartOption = function(legend,seriesData,maxC,maxA,maxR) {
 	     text: ''
 	  },
 	  tooltip: {   //提示框，鼠标悬浮交互时的信息提示
-	     show:true,
-	     trigger: 'axis'
+	    //  show:true,
+	    //  trigger: 'axis'
 	  },
-	  grid:{
-	  	top:'10%'
-	  },
-	  center: ['0%', '0%'],
+	  // grid:{
+	  // 	top:'10%'
+	  // },
+	  // center: ['0%', '0%'],
 	  legend: {    //图例，每个图表最多仅有一个图例
-	    x: 'left',
+	    left: 'center',
 	    data: legend,
-	    textStyle:{
-	    	fontFamily:"宋体",
-	    	fontSize:'12',
-	    },
-	    orient:'vertical',
-	    padding:16,
-	    borderWidth :1,
-	    borderColor:'#ddd',
-	    selectedMode:'single'
+			bottom:12,
+	    // textStyle:{
+	    // 	fontFamily:"宋体",
+	    // 	fontSize:'12',
+	    // },
+	    // orient:'vertical',
+	    // padding:16,
+	    // borderWidth :1,
+	    // borderColor:'#ddd',
+	    // selectedMode:'single'
 	  },
 	  radar: [{    //极坐标
 	    indicator: [
@@ -506,14 +516,7 @@ const renderChartOption = function(legend,seriesData,maxC,maxA,maxR) {
 	    symbol :'rect',
 	    data: seriesData
 	  }],
-	  color:[
-	  	'#7fb6f0',
-	  	// '#8085e9',
-	  	// '#f7a35c',
-	  	// '#4d6b8f',
-	  	// '#77e6d8',
-	  	// '#f15c80'
-	  ]
+		color:['#5B9BD1','#4DB3A4','#A276A4','#F36A5A','#CAC12C','#4C5667'].reverse()
 	};
 	return option;
 }
@@ -665,30 +668,31 @@ export const buildEnterpriseCapitalRegistrationOption  = (data) =>{
 	let option = {
 		title : {
 			text: '',
-			x:'center'
+			left:'center'
 		},
 		tooltip : {
 			trigger: 'item',
 			formatter: "{a} <br/>{b} : {c} ({d}%)"
 		},
 		legend: {
-			orient: 'vertical',
-			x: 'left',
+			// orient: 'vertical',
+			x:'center',
+			bottom:12,
 			data:[...data]
 		},
-		grid: {
-			 left: '5%',
-			 right: '4%',
-			 bottom: '3%',
-			 containLabel: true
-	 	},
+		// grid: {
+		// 	 left: '5%',
+		// 	 right: '4%',
+		// 	 bottom: '3%',
+		// 	 containLabel: true
+		// 	},
 		series : [
 			{
 				name:'查询总量',
 				type:'pie',
 				selectedMode: 'single',
 				radius : '55%',
-				center: ['58%', '50%'],
+				center: ['50%', '40%'],
 				data:[...data],
 
 				itemStyle: {
@@ -698,96 +702,10 @@ export const buildEnterpriseCapitalRegistrationOption  = (data) =>{
 						shadowColor: 'rgba(0, 0, 0, 0.5)'
 					}
 				}
-				// itemStyle: {
-				//     normal: {
-				//         color: '#61a0a8',
-				//         borderWidth: 0.5,
-				//         borderColor: '#ffffff'
-				//     },
-				//     emphasis: {
-				//         color: '#c23531',
-				//         shadowBlur: 10,
-				//         shadowOffsetX: 0,
-				//         shadowColor: 'rgba(0, 0, 0, 0.5)'
-				//     }
-				// }
 			}
-		]
+		],
+		color:['#5B9BD1','#4DB3A4','#A276A4','#F36A5A','#CAC12C','#4C5667']
 	}
-
-
-	// let option ={
-	//     title: {
-	//         text: "",
-	//         x: "center"
-	//     },
-	//     tooltip: {
-	//         trigger: "item",
-	//         formatter: "{a} <br/>{b} : {c} ({d}%)"
-	//     },
-	// 	legend: {
-	//         orient: 'vertical',
-	//         x: 'left',
-	//         data:[...data]
-	//     },
-	//     label: {
-	//         normal: {
-	//             formatter: "{b} ({d}%)",
-	//             position: "insideTopRight"
-	//         }
-	//     },
-	//     labelLine: {
-	//         normal: {
-	//             smooth: .6
-	//         }
-	//     },
-	//     toolbox: {
-	//         show: !0,
-	//         feature: {
-	//             mark: {
-	//                 show: !0
-	//             },
-	//             dataView: {
-	//                 show: !0,
-	//                 readOnly: !1
-	//             },
-	//             magicType: {
-	//                 show: !0,
-	//                 type: ["pie", "funnel"]
-	//             },
-	//             restore: {
-	//                 show: !0
-	//             },
-	//             saveAsImage: {
-	//                 show: !0
-	//             }
-	//         }
-	//     },
-	//     calculable: !0,
-	//     series: [{
-	//         name: "企业数量",
-	//         type: "pie",
-	// 		center: ['59%', '50%'],
-	//         roseType: "area",
-	//         label: {
-	//             normal: {
-	//                 show: !0
-	//             },
-	//             emphasis: {
-	//                 show: !0
-	//             }
-	//         },
-	//         lableLine: {
-	//             normal: {
-	//                 show: !0
-	//             },
-	//             emphasis: {
-	//                 show: !0
-	//             }
-	//         },
-	//         data:  [...data]
-	//     }]
-	// }
 
 	return option
 }
@@ -808,10 +726,14 @@ export const buildEnterpriseQquantityOption = (data) =>{
 		        }
 		    },
 		    grid: {
-		        left: '3%',
-		        right: '8%',
-		        bottom: '5%',
-		        containLabel: true
+		        left: '0',
+		        // right: '8%',
+		        // bottom: '10%',
+		        containLabel: true,
+
+						y:40,
+
+						y2:40,
 		    },
 		    xAxis: {
 		        type: 'value'
@@ -823,8 +745,11 @@ export const buildEnterpriseQquantityOption = (data) =>{
 		    series: [{
 		        name: '企业数量',
 		        type: 'bar',
-		        data: [...xData]
-		    }]
+						barWidth : 8,
+						data: [...xData]
+		    }
+			],
+				color:['#5B9BD1']
 		}
 
 		return option
@@ -833,7 +758,6 @@ export const buildEnterpriseQquantityOption = (data) =>{
 
 //企业注册时间查询总量
 export const buildEnterpriseRegistrationTimeOption = (data) =>{
-
 	let {count,year} = data;
 	let option = {
     title: {
@@ -843,9 +767,6 @@ export const buildEnterpriseRegistrationTimeOption = (data) =>{
     tooltip: {
         trigger: 'axis'
     },
-    // legend: {
-    //     data:['最高气温','最低气温']
-    // },
     toolbox: {
         show: true,
         feature: {
@@ -870,22 +791,30 @@ export const buildEnterpriseRegistrationTimeOption = (data) =>{
         }
     },
 		grid: {
-			 left: '3%',
-			 right: '12%',
-			 bottom: '3%',
+			//  left: '3%',
+			//  right: '12%',
+			 x:10,
+			 x2:80,
+			 y:80,
+			 y2:30,
+			//  bottom: '3%',
 			 containLabel: true
 	 	},
+		// grid: {
+		// 		left: '0',
+		// 		// right: '8%',
+		// 		// bottom: '10%',
+		// 		containLabel: true,
+		//
+		// 		y:30,
+		//
+		// 		y2:30,
+		// },
     series: [
         {
             name:'最高数量',
             type:'line',
             data:[...count],
-            // markPoint: {
-            //     data: [
-            //         {type: 'max', name: '最大值'},
-            //         {type: 'min', name: '最小值'}
-            //     ]
-            // },
             markLine: {
                 data: [
                     {type: 'average', name: '平均值'}
@@ -893,11 +822,11 @@ export const buildEnterpriseRegistrationTimeOption = (data) =>{
             }
         }
 
-    ]
+    ],
+		color:['#5B9BD1']
 };
 	return option
 }
-
 
 //在营企业总数
 export const buildTotaInUKEnterprisesOption = (data) =>{
