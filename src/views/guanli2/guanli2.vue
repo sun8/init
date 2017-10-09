@@ -77,7 +77,7 @@
            <div class="gridBlock">
    				   <h2>{{chartOptionsTitle[index]}}</h2>
                 <div class="echarts-react">
-						      <chart :options="chartOptions[index]" ></chart>
+						      <chart :options="chartOptions[index]" auto-resize :ref="item.refs"></chart>
    					    </div>
  			    </div>
 
@@ -98,14 +98,20 @@
              <div class="gridBlockMap">
                <h2>{{chartOptionsTitle[5]}}</h2>
                <el-tabs v-model="activeName2" type="card" @tab-click="handleClick" style="float:left;margin-top:10px">
-                  <el-tab-pane label="监控密度" name="first"></el-tab-pane>
-                  <el-tab-pane label="变更密度" name="second"></el-tab-pane>
-                  <el-tab-pane label="风险密度" name="third"></el-tab-pane>
+                  <el-tab-pane label="监控密度" name="first">
+
+                  </el-tab-pane>
+                  <el-tab-pane label="变更密度" name="second">
+
+                  </el-tab-pane>
+                  <el-tab-pane label="风险密度" name="third">
+
+                  </el-tab-pane>
               </el-tabs>
              </div>
 
    					  <div class="echarts-react">
-						    <ECharts :options="chartOptions[5]"></ECharts>
+						    <ECharts :options="chartOptions[5]" auto-resize :ref="layout[5].refs"></ECharts>
    					  </div>
  				   </div>
 
@@ -168,7 +174,12 @@ import {
   import 'echarts/lib/component/legend'
   import 'echarts/lib/component/visualMap'
   import 'echarts/lib/component/polar'
-  import '../../common/data/china';
+
+  // Map of China
+  import chinaMap from '../../common/data/china.json'
+
+  // registering map data
+  ECharts.registerMap('china', chinaMap)
 
   export default {
     components:{
@@ -177,18 +188,17 @@ import {
 	    chart,
       ECharts
     },
-    props:['initOptions'],
     data () {
 
       if(!this.getUIState()){
 
       let layoutData = [
-              {"x":0,"y":0,"w":6,"h":12,"i":"0"},
-              {"x":6,"y":0,"w":6,"h":12,"i":"1"},
-              {"x":0,"y":6,"w":6,"h":12,"i":"2"},
-              {"x":6,"y":6,"w":6,"h":12,"i":"3"},
-              {"x":0,"y":12,"w":6,"h":12,"i":"4"},
-    		      {"x":6,"y":12,"w":6,"h":12, "i":"5"}
+              {"x":0,"y":0,"w":6,"h":12,"i":"0","refs":"a"},
+              {"x":6,"y":0,"w":6,"h":12,"i":"1","refs":"b"},
+              {"x":0,"y":12,"w":6,"h":12,"i":"2","refs":"pie"},
+              {"x":6,"y":12,"w":6,"h":12,"i":"3","refs":"line"},
+              {"x":0,"y":18,"w":6,"h":12,"i":"4","refs":"c"},
+    		      {"x":6,"y":18,"w":6,"h":12, "i":"5","refs":"map"}
           ];
         this.setUIState(layoutData);
       }
@@ -208,7 +218,13 @@ import {
         chartOptions: [],
         chartOptionsTitle:['按行业分类企业数量TOP10','整体概览','企业注册资本','按企业注册时间查询总量','指标概要','变更趋势'],
 
-        activeName2: 'first'
+        activeName2: 'first',
+        mapData:{
+          a:null,
+            b:null,
+              c:null
+        },
+        timer:null
         // autoResize:true
       }
 
@@ -224,20 +240,69 @@ import {
   		this.getRadarMap();
 
   		this.getMonitorDensity();
+      // this.getChangeDensity();
+      // this.getRiskDensity();
 
   		this.getEnterpriseCapitalRegistration();
   		this.getEnterpriseQquantity();
   		this.getEnterpriseRegistrationTime();
 
   		this.getTotaInUKEnterprises();
+
+
+
+
+      //loading
+
+      // let bar = this.$refs.bar
+      // bar.showLoading({
+      //   text: '正在加载',
+      //   color: '#4ea397',
+      //   maskColor: 'rgba(255, 255, 255, 0.4)'
+      // })
+      // setTimeout(f => {
+      //     bar.hideLoading()
+      // }, 10000)
+
+
+    },
+    //数据更新完的回掉函数，执行定时器
+    updated(){
+      //饼图定时器
+      if(!this.chartOptions.length)return
+      let dataIndex = -1;
+      let pie = this.$refs.pie;
+      let dataLen = pie[0].options.series[0].data.length;
+      console.log(dataLen,!pie[0].dispatchAction);
+      if(!pie[0].dispatchAction)return
+      clearInterval(this.timer)
+      this.timer = setInterval(() => {
+        pie[0].dispatchAction({
+          type: 'downplay',
+          seriesIndex: 0,
+          dataIndex
+        })
+        dataIndex = (dataIndex + 1) % dataLen
+        pie[0].dispatchAction({
+          type: 'highlight',
+          seriesIndex: 0,
+          dataIndex
+        })
+      }, 1000)
+    },
+    //组件卸载后关闭定时器
+    destroyed(){
+      clearInterval(this.timer)
     },
     methods: {
+
+
       //调整布局后的回掉函数（大小）
-        resizedEvent: function(i, newH, newW, newHPx, newWPx){
+        resizedEvent(i, newH, newW, newHPx, newWPx){
           console.log("RESIZED i=" + i + ", H=" + newH + ", W=" + newW + ", H(px)=" + newHPx + ", W(px)=" + newWPx);
       },
       //调整布局后的回掉函数（位置）
-        movedEvent: function(i, newX, newY){
+        movedEvent(i, newX, newY){
             console.log("MOVED i=" + i + ", X=" + newX + ", Y=" + newY);
         },
 
@@ -259,21 +324,30 @@ import {
 
 
 //密度切换
-      handleClick(tab, event) {
-        console.log(tab.index, event);
-        switch (tab.index) {
-          case 0:
-            console.log(tab.label);
+      handleClick(tab) {
+        switch (tab.label) {
+          case "监控密度":
+          // 监控密度
+          console.log('监控密度');
+            this.getMonitorDensity()
+            // this.chartOptions[5] = this.mapData.a;
           break;
-          case 1:
-            console.log(tab.label);
+          case "变更密度":
+          // 变更密度
+            console.log('变更密度');
+            this.getChangeDensity();
+            // this.chartOptions[5] = this.mapData.b;
           break;
-          case 2:
-            console.log(tab.label);
+          case "风险密度":
+          // 风险密度
+            console.log("风险密度");
+            this.getRiskDensity();
+            // this.chartOptions[5] = this.mapData.c;
           break;
           default:
-            console.log(tab.label);
-
+            console.log('监控密度');
+            this.getMonitorDensity()
+            // this.chartOptions[5] = this.mapData.a;
         }
       },
 
@@ -281,12 +355,8 @@ import {
       // 整体概览 1
     	getLatestChangeStat(){
     		getLatestChangeStat( ({success, statResult})=>{
-
     			if(!success) return;
-
-
     			this.chartOptions[1] = buildLatestChangeOption(statResult);
-          console.log(this.chartOptions[1]);
 
     		} );
     	},
@@ -308,8 +378,9 @@ import {
     	getMonitorDensity(){
     		getMonitorDensity( ({success, statResult,proviceCount})=>{
     				if(!success) return;
+              console.log(statResult);
     				this.chartOptions[5] = buildMonitorDensityOption(statResult);
-
+          // this.mapData.a = buildMonitorDensityOption(statResult);
     		} );
     	},
 
@@ -317,25 +388,24 @@ import {
     	getChangeDensity(){
     		getChangeDensity( ({success, statResult,proviceCount})=>{
     				if(!success) return;
+            console.log(statResult);
     				this.chartOptions[5] = buildChangeDensityOption(statResult);
-
-
+            // this.mapData.b = buildMonitorDensityOption(statResult);
     		} );
     	},
 
     	// 请求风险密度, 5
     	getRiskDensity(){
     		getRiskDensity( ({success, statResult,proviceCount})=>{
-
     				if(!success) return;
-    				this.chartOptions[4] = buildRiskDensityOption(statResult);
-
+            console.log(statResult);
+    				this.chartOptions[5] = buildRiskDensityOption(statResult);
+            // this.mapData.c = buildMonitorDensityOption(statResult);
     		} );
     	},
 
       //企业注册资本 2
     	getEnterpriseCapitalRegistration(){
-
     		getEnterpriseCapitalRegistration(({code,result})=>{
     			if(code!==200) return;
     			this.chartOptions[2] = buildEnterpriseCapitalRegistrationOption(result.pie);
@@ -345,7 +415,6 @@ import {
 
       //企业数量 0
     	getEnterpriseQquantity(){
-
     		getEnterpriseQquantity(({code,result})=>{
     			if(code!==200) return;
     			this.chartOptions[0] = buildEnterpriseQquantityOption(result);
@@ -355,9 +424,7 @@ import {
 
       //企业注册时间查询总量 3
     	getEnterpriseRegistrationTime(){
-
     		getEnterpriseRegistrationTime(({code,result})=>{
-
     			if(code!==200) return;
     			this.chartOptions[3] = buildEnterpriseRegistrationTimeOption(result);
 
@@ -366,12 +433,10 @@ import {
 
       //在营企业总数
     	getTotaInUKEnterprises(){
-
     		getTotaInUKEnterprises(({code,result})=>{
     			if(code!==200) return;
     			let totaInUKEnterprises = buildTotaInUKEnterprisesOption(result);
           this.totaInUKEnterprises = totaInUKEnterprises;
-          console.log(this.initOptions);
     		})
     	},
 
