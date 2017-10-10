@@ -77,7 +77,7 @@
            <div class="gridBlock">
    				   <h2>{{chartOptionsTitle[index]}}</h2>
                 <div class="echarts-react">
-						      <chart :options="chartOptions[index]" auto-resize :ref="item.refs"></chart>
+						      <chart :options="chartOptions[index]" auto-resize :ref="item.refs" class="vue-echart"></chart>
    					    </div>
  			    </div>
 
@@ -178,6 +178,7 @@ import {
   // Map of China
   import chinaMap from '../../common/data/china.json'
 
+
   // registering map data
   ECharts.registerMap('china', chinaMap)
 
@@ -215,7 +216,7 @@ import {
           entYear:null
         },
 
-        chartOptions: [],
+        chartOptions: [null, null, null, null, null],
         chartOptionsTitle:['按行业分类企业数量TOP10','整体概览','企业注册资本','按企业注册时间查询总量','指标概要','变更趋势'],
 
         activeName2: 'first',
@@ -273,7 +274,7 @@ import {
       let dataIndex = -1;
       let pie = this.$refs.pie;
       let dataLen = pie[0].options.series[0].data.length;
-      console.log(dataLen,!pie[0].dispatchAction);
+    //   console.log(dataLen,!pie[0].dispatchAction);
       if(!pie[0].dispatchAction)return
       clearInterval(this.timer)
       this.timer = setInterval(() => {
@@ -299,7 +300,19 @@ import {
 
       //调整布局后的回掉函数（大小）
         resizedEvent(i, newH, newW, newHPx, newWPx){
-          console.log("RESIZED i=" + i + ", H=" + newH + ", W=" + newW + ", H(px)=" + newHPx + ", W(px)=" + newWPx);
+			// 根据实际的容器的宽高走
+			this.$refs.a[0].resize({width: null, height:null})
+			this.$refs.b[0].resize({width: null, height:null})
+			this.$refs.pie[0].resize({width: null, height:null})
+			this.$refs.line[0].resize({width: null, height:null})
+			this.$refs.map.resize({width: null, height:null})
+
+			// this.$refs.a.resize({width: null, height:null})
+			this.layout.forEach((elt,i)=>{
+
+				// this.$refs[elt.refs].resize({width: null, height:null});
+			})
+
       },
       //调整布局后的回掉函数（位置）
         movedEvent(i, newX, newY){
@@ -569,4 +582,8 @@ section{
     width:100% !important;
   }
 }
+.echarts-react{
+	position: absolute; top: 56px; bottom: 0; left: 0; right: 0;
+}
+.vue-echart{position: relative; height: 100%; width: 100%;}
 </style>
