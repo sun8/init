@@ -15,10 +15,10 @@ export function buildLatestChangeOption(data) {
 	newMonitor = resetVal(newMonitor);
 	risk = resetVal(risk);
 
-	let monitorN = `监控数量  ${monitor}家`;
-	let changeN = `本期变更  ${change}家`;
-	let newMonitorN = `本期新增  ${newMonitor}家`;
-	let riskN = `本期风险  ${risk}`;
+	let monitorN = `监控数量 ${monitor}`;
+	let changeN = `本期变更 ${change}`;
+	let newMonitorN = `本期新增 ${newMonitor}`;
+	let riskN = `本期风险 ${risk}`;
 
 	return {
 		angleAxis: {},
@@ -29,10 +29,10 @@ export function buildLatestChangeOption(data) {
 		        z: 10
 		    },
 		    polar: {
-					center: ['55%', '40%'],
+					center: ['50%', '40%'],
 					radius : '65%',
 		    },
-				center: ['55%', '40%'],
+				center: ['50%', '40%'],
 				radius : '65%',
 		    series: [{
 		        type: 'bar',
@@ -62,7 +62,10 @@ export function buildLatestChangeOption(data) {
 
 			],
 
-
+			tooltip: {   //提示框，鼠标悬浮交互时的信息提示
+				 show:true,
+				 trigger: 'axis'
+			},
 		    legend: {
 		        show: true,
 						// orient: 'vertical',
@@ -467,13 +470,13 @@ const renderChartOption = function(legend,seriesData,maxC,maxA,maxR) {
 	     text: ''
 	  },
 	  tooltip: {   //提示框，鼠标悬浮交互时的信息提示
-	    //  show:true,
-	    //  trigger: 'axis'
+	     show:true,
+	     trigger: 'axis'
 	  },
-	  // grid:{
-	  // 	top:'10%'
-	  // },
-	  // center: ['0%', '0%'],
+	  grid:{
+	  	top:'10%'
+	  },
+	  center: ['0%', '0%'],
 	  legend: {    //图例，每个图表最多仅有一个图例
 	    left: 'center',
 	    data: legend,
@@ -606,6 +609,7 @@ const renderDensityOption = (seectionName,datas,max) => {
 	    },
 	    tooltip : {
     		trigger: 'item',
+				 show:true,
     		formatter: function(params,ticket,callback) {
     				if(params.value) {
     						return params.name + ": " + params.value;
@@ -676,16 +680,11 @@ export const buildEnterpriseCapitalRegistrationOption  = (data) =>{
 		},
 		legend: {
 			// orient: 'vertical',
-			x:'center',
+			//  top: 'middle',
+			left:'center',
 			bottom:12,
 			data:[...data]
 		},
-		// grid: {
-		// 	 left: '5%',
-		// 	 right: '4%',
-		// 	 bottom: '3%',
-		// 	 containLabel: true
-		// 	},
 		series : [
 			{
 				name:'查询总量',
@@ -726,9 +725,7 @@ export const buildEnterpriseQquantityOption = (data) =>{
 		        }
 		    },
 		    grid: {
-		        left: '0',
-		        // right: '8%',
-		        // bottom: '10%',
+		        left: '2%',
 		        containLabel: true,
 
 						y:40,
@@ -769,10 +766,12 @@ export const buildEnterpriseRegistrationTimeOption = (data) =>{
     },
     toolbox: {
         show: true,
+				right: '90',
         feature: {
-            dataZoom: {
-                yAxisIndex: 'none'
-            },
+            // dataZoom: {
+            //     yAxisIndex: 'none'
+            // },
+
             dataView: {readOnly: false},
             magicType: {type: ['line', 'bar']},
             restore: {},
@@ -791,25 +790,12 @@ export const buildEnterpriseRegistrationTimeOption = (data) =>{
         }
     },
 		grid: {
-			//  left: '3%',
-			//  right: '12%',
 			 x:10,
-			 x2:80,
+			 x2:90,
 			 y:80,
 			 y2:30,
-			//  bottom: '3%',
 			 containLabel: true
 	 	},
-		// grid: {
-		// 		left: '0',
-		// 		// right: '8%',
-		// 		// bottom: '10%',
-		// 		containLabel: true,
-		//
-		// 		y:30,
-		//
-		// 		y2:30,
-		// },
     series: [
         {
             name:'最高数量',

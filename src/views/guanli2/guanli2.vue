@@ -8,7 +8,7 @@
             <i class="bg-green"></i>
             <div class="widget-thumb-body">
               <span class="widget-thumb-subtitle"></span>
-              <span class="widget-thumb-body-stat">{{totaInUKEnterprises.ent}}</span>
+              <span class="widget-thumb-body-stat">{{Math.round(totaInUKEnterprises.ent/10000)}}万</span>
             </div>
           </div>
         </div>
@@ -20,7 +20,7 @@
             <i class="bg-red"></i>
             <div class="widget-thumb-body">
               <span class="widget-thumb-subtitle"></span>
-              <span class="widget-thumb-body-stat">{{totaInUKEnterprises.ind}}</span>
+              <span class="widget-thumb-body-stat">{{Math.round(totaInUKEnterprises.ind/10000)}}万</span>
             </div>
           </div>
         </div>
@@ -32,7 +32,7 @@
             <i class="bg-purple"></i>
             <div class="widget-thumb-body">
               <span class="widget-thumb-subtitle"></span>
-              <span class="widget-thumb-body-stat">{{totaInUKEnterprises.code}}</span>
+              <span class="widget-thumb-body-stat">{{Math.round(totaInUKEnterprises.code/10000)}}万</span>
             </div>
           </div>
         </div>
@@ -44,7 +44,7 @@
             <i class="bg-blue"></i>
             <div class="widget-thumb-body">
               <span class="widget-thumb-subtitle"></span>
-              <span class="widget-thumb-body-stat">{{totaInUKEnterprises.entYear}}</span>
+              <span class="widget-thumb-body-stat">{{Math.round(totaInUKEnterprises.entYear/10000)}}万</span>
             </div>
           </div>
         </div>
@@ -76,8 +76,19 @@
 
            <div class="gridBlock">
    				   <h2>{{chartOptionsTitle[index]}}</h2>
-                <div class="echarts-react">
-						      <chart :options="chartOptions[index]" auto-resize :ref="item.refs" class="vue-echart"></chart>
+                <div class="echarts-vue">
+                  <i class="el-icon-loading loadingStyle" v-if="loading[index]"></i>
+
+                    <chart
+                   :options="chartOptions[index]"
+                   auto-resize
+                   :ref="item.refs"
+                   class="vue-echart"
+                     v-else
+
+                   ></chart>
+
+
    					    </div>
  			    </div>
 
@@ -97,7 +108,11 @@
            <div class="gridBlock">
              <div class="gridBlockMap">
                <h2>{{chartOptionsTitle[5]}}</h2>
-               <el-tabs v-model="activeName2" type="card" @tab-click="handleClick" style="float:left;margin-top:10px">
+               <el-tabs
+               v-model="activeName2"
+               type="card"
+               @tab-click="handleClick"
+               style="float:left;margin-top:10px">
                   <el-tab-pane label="监控密度" name="first">
 
                   </el-tab-pane>
@@ -110,8 +125,14 @@
               </el-tabs>
              </div>
 
-   					  <div class="echarts-react">
-						    <ECharts :options="chartOptions[5]" auto-resize :ref="layout[5].refs"></ECharts>
+   					  <div class="echarts-vue">
+                <i class="el-icon-loading loadingStyle" v-if="loading[5]"></i>
+						    <ECharts
+						    :options="chartOptions[5]"
+						    auto-resize
+						    :ref="layout[5].refs"
+						      v-else
+						     ></ECharts>
    					  </div>
  				   </div>
 
@@ -194,11 +215,11 @@ import {
       if(!this.getUIState()){
 
       let layoutData = [
-              {"x":0,"y":0,"w":6,"h":12,"i":"0","refs":"a"},
-              {"x":6,"y":0,"w":6,"h":12,"i":"1","refs":"b"},
+              {"x":0,"y":0,"w":6,"h":12,"i":"0","refs":"bar"},
+              {"x":6,"y":0,"w":6,"h":12,"i":"1","refs":"polar"},
               {"x":0,"y":12,"w":6,"h":12,"i":"2","refs":"pie"},
               {"x":6,"y":12,"w":6,"h":12,"i":"3","refs":"line"},
-              {"x":0,"y":18,"w":6,"h":12,"i":"4","refs":"c"},
+              {"x":0,"y":18,"w":6,"h":12,"i":"4","refs":"radar"},
     		      {"x":6,"y":18,"w":6,"h":12, "i":"5","refs":"map"}
           ];
         this.setUIState(layoutData);
@@ -215,8 +236,8 @@ import {
           code:null,
           entYear:null
         },
-
-        chartOptions: [null, null, null, null, null],
+        loading:[true,true,true,true,true,true],
+        chartOptions: [null, null, null, null, null,null],
         chartOptionsTitle:['按行业分类企业数量TOP10','整体概览','企业注册资本','按企业注册时间查询总量','指标概要','变更趋势'],
 
         activeName2: 'first',
@@ -234,9 +255,9 @@ import {
 
 
     },
+    created(){
+    },
     mounted(){
-
-
       this.getLatestChangeStat();
   		this.getRadarMap();
 
@@ -250,22 +271,6 @@ import {
 
   		this.getTotaInUKEnterprises();
 
-
-
-
-      //loading
-
-      // let bar = this.$refs.bar
-      // bar.showLoading({
-      //   text: '正在加载',
-      //   color: '#4ea397',
-      //   maskColor: 'rgba(255, 255, 255, 0.4)'
-      // })
-      // setTimeout(f => {
-      //     bar.hideLoading()
-      // }, 10000)
-
-
     },
     //数据更新完的回掉函数，执行定时器
     updated(){
@@ -273,9 +278,8 @@ import {
       if(!this.chartOptions.length)return
       let dataIndex = -1;
       let pie = this.$refs.pie;
+      if(!pie)return;
       let dataLen = pie[0].options.series[0].data.length;
-    //   console.log(dataLen,!pie[0].dispatchAction);
-      if(!pie[0].dispatchAction)return
       clearInterval(this.timer)
       this.timer = setInterval(() => {
         pie[0].dispatchAction({
@@ -290,6 +294,7 @@ import {
           dataIndex
         })
       }, 1000)
+
     },
     //组件卸载后关闭定时器
     destroyed(){
@@ -298,33 +303,28 @@ import {
     methods: {
 
 
-      //调整布局后的回掉函数（大小）
-        resizedEvent(i, newH, newW, newHPx, newWPx){
-			// 根据实际的容器的宽高走
-			this.$refs.a[0].resize({width: null, height:null})
-			this.$refs.b[0].resize({width: null, height:null})
-			this.$refs.pie[0].resize({width: null, height:null})
-			this.$refs.line[0].resize({width: null, height:null})
-			this.$refs.map.resize({width: null, height:null})
+    //调整布局后的回掉函数（大小缩放）
+      resizedEvent(i, newH, newW, newHPx, newWPx){
+  			// 根据实际的容器的宽高走
+        let ele = this.layout[i].refs;
+        if(ele==='map'){
+          this.$refs.map.resize({width: newWPx, height:newHPx-56})
+        }else {
+          this.$refs[ele][0].resize({width: newWPx, height:newHPx-56})
+        }
+        console.log("MOVED i=" + i + ", H=" + newH + ", W=" + newW);
 
-			// this.$refs.a.resize({width: null, height:null})
-			this.layout.forEach((elt,i)=>{
-
-				// this.$refs[elt.refs].resize({width: null, height:null});
-			})
-
-      },
-      //调整布局后的回掉函数（位置）
-        movedEvent(i, newX, newY){
+        this.layout[i].w = newW;
+        this.layout[i].h = newH;
+        this.setUIState(this.layout);
+    },
+    //调整布局后的回掉函数,本地存储（位置）
+      movedEvent(i, newX, newY){
+          this.layout[i].x = newX;
+          this.layout[i].y = newY;
+          this.setUIState(this.layout);
             console.log("MOVED i=" + i + ", X=" + newX + ", Y=" + newY);
         },
-
-      //布局数据变化后的回调函数，将变化后的数据本地存储，并更新视图
-      	// onLayoutChange(layout, layouts){
-      	// 	this.setUIState(layouts);
-        //   this.layouts = layouts ;
-        //   this.layout = layout;
-      	// }
 
   //获取本地布局参数
       getUIState(){
@@ -364,26 +364,59 @@ import {
         }
       },
 
-//数据请求
+//图表数据请求
+
+      //标题，在营企业总数
+      getTotaInUKEnterprises(){
+        getTotaInUKEnterprises(({code,result})=>{
+          if(code!==200) return;
+          let totaInUKEnterprises = buildTotaInUKEnterprisesOption(result);
+          this.totaInUKEnterprises = totaInUKEnterprises;
+        })
+      },
+
+      //企业数量 0
+      getEnterpriseQquantity(){
+        getEnterpriseQquantity(({code,result})=>{
+          if(code!==200) return;
+          this.chartOptions[0] = buildEnterpriseQquantityOption(result);
+          this.loading[0] = false;
+        })
+      },
+
       // 整体概览 1
     	getLatestChangeStat(){
     		getLatestChangeStat( ({success, statResult})=>{
     			if(!success) return;
     			this.chartOptions[1] = buildLatestChangeOption(statResult);
-
+          this.loading[1] = false;
     		} );
     	},
 
+      //企业注册资本 2
+      getEnterpriseCapitalRegistration(){
+        getEnterpriseCapitalRegistration(({code,result})=>{
+          if(code!==200) return;
+          this.chartOptions[2] = buildEnterpriseCapitalRegistrationOption(result.pie);
+          this.loading[2] = false;
+        })
+      },
+
+      //企业注册时间查询总量 3
+      getEnterpriseRegistrationTime(){
+        getEnterpriseRegistrationTime(({code,result})=>{
+          if(code!==200) return;
+          this.chartOptions[3] = buildEnterpriseRegistrationTimeOption(result);
+          this.loading[3] = false;
+        })
+      },
 
       // 请求雷达图数据 4
     	getRadarMap(){
-
     		getRadarMap( ( {data, success} )=>{
     			if(!success) return;
-
     			this.chartOptions[4] =  buildChangeRadar(data);
-
-
+          this.loading[4] = false;
     		} );
     	},
 
@@ -391,8 +424,9 @@ import {
     	getMonitorDensity(){
     		getMonitorDensity( ({success, statResult,proviceCount})=>{
     				if(!success) return;
-              console.log(statResult);
+              // console.log(statResult);
     				this.chartOptions[5] = buildMonitorDensityOption(statResult);
+            this.loading[5] = false;
           // this.mapData.a = buildMonitorDensityOption(statResult);
     		} );
     	},
@@ -401,8 +435,9 @@ import {
     	getChangeDensity(){
     		getChangeDensity( ({success, statResult,proviceCount})=>{
     				if(!success) return;
-            console.log(statResult);
+            // console.log(statResult);
     				this.chartOptions[5] = buildChangeDensityOption(statResult);
+            this.loading[5] = false;
             // this.mapData.b = buildMonitorDensityOption(statResult);
     		} );
     	},
@@ -411,47 +446,12 @@ import {
     	getRiskDensity(){
     		getRiskDensity( ({success, statResult,proviceCount})=>{
     				if(!success) return;
-            console.log(statResult);
+            // console.log(statResult);
     				this.chartOptions[5] = buildRiskDensityOption(statResult);
+            this.loading[5] = false;
             // this.mapData.c = buildMonitorDensityOption(statResult);
     		} );
-    	},
-
-      //企业注册资本 2
-    	getEnterpriseCapitalRegistration(){
-    		getEnterpriseCapitalRegistration(({code,result})=>{
-    			if(code!==200) return;
-    			this.chartOptions[2] = buildEnterpriseCapitalRegistrationOption(result.pie);
-
-    		})
-    	},
-
-      //企业数量 0
-    	getEnterpriseQquantity(){
-    		getEnterpriseQquantity(({code,result})=>{
-    			if(code!==200) return;
-    			this.chartOptions[0] = buildEnterpriseQquantityOption(result);
-
-    		})
-    	},
-
-      //企业注册时间查询总量 3
-    	getEnterpriseRegistrationTime(){
-    		getEnterpriseRegistrationTime(({code,result})=>{
-    			if(code!==200) return;
-    			this.chartOptions[3] = buildEnterpriseRegistrationTimeOption(result);
-
-    		})
-    	},
-
-      //在营企业总数
-    	getTotaInUKEnterprises(){
-    		getTotaInUKEnterprises(({code,result})=>{
-    			if(code!==200) return;
-    			let totaInUKEnterprises = buildTotaInUKEnterprisesOption(result);
-          this.totaInUKEnterprises = totaInUKEnterprises;
-    		})
-    	},
+    	}
 
     },
   }
@@ -556,7 +556,7 @@ section{
     background-color: #fff;
   }
 .gridBlock{
-  margin-bottom: 40px;
+  height: auto;
   h2{
     height: 56px;
     font: 16px/56px "微软雅黑";
@@ -582,8 +582,23 @@ section{
     width:100% !important;
   }
 }
-.echarts-react{
-	position: absolute; top: 56px; bottom: 0; left: 0; right: 0;
+.echarts-vue{
+  text-align: center;
+	position: absolute;
+  top: 56px;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
-.vue-echart{position: relative; height: 100%; width: 100%;}
+.vue-echart{
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+.loadingStyle{
+  line-height: 8;
+  color: #14A480;
+  font-size: 46px;
+  font-weight: 900;
+}
 </style>

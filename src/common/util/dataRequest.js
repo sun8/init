@@ -21,7 +21,6 @@ const reqByCross = axios.create({
 
 function request(url, cb, keyName) {
 	if( shouldRequest(keyName) ){
-
 		req.get( url )
 			.then(rut=>{
 				// console.log(rut);
