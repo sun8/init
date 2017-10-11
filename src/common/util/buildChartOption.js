@@ -68,8 +68,6 @@ export function buildLatestChangeOption(data) {
 			},
 		    legend: {
 		        show: true,
-						// orient: 'vertical',
-						// x: 'left',
 						bottom:12,
 		        data: [monitorN, newMonitorN, changeN, riskN]
 		    },
@@ -78,9 +76,7 @@ export function buildLatestChangeOption(data) {
 					'#5B9BD1',
 					'#4DB3A4',
 					'#A276A4',
-			  	'#F36A5A',
-
-
+			  	'#F36A5A'
 			  ]
 	}
 }
@@ -481,15 +477,6 @@ const renderChartOption = function(legend,seriesData,maxC,maxA,maxR) {
 	    left: 'center',
 	    data: legend,
 			bottom:12,
-	    // textStyle:{
-	    // 	fontFamily:"宋体",
-	    // 	fontSize:'12',
-	    // },
-	    // orient:'vertical',
-	    // padding:16,
-	    // borderWidth :1,
-	    // borderColor:'#ddd',
-	    // selectedMode:'single'
 	  },
 	  radar: [{    //极坐标
 	    indicator: [
@@ -527,22 +514,22 @@ const renderChartOption = function(legend,seriesData,maxC,maxA,maxR) {
 // 密度
 
 export const buildMonitorDensityOption = (data)=>{
-	return createDensityOption(data, 10000);
+	return createDensityOption('监控密度',data, 10000);
 
 }
 export const buildChangeDensityOption = (data)=>{
-	return createDensityOption(data, 1000);
+	return createDensityOption('变更密度',data, 1000);
 }
 
 export const buildRiskDensityOption = (data)=>{
-	return createDensityOption(data, 1000);
+	return createDensityOption('风险密度',data, 1000);
 }
 
-const createDensityOption = (data, ratio) => {
+const createDensityOption = (seectionName,data, ratio) => {
 
 
 	let datas = [];
-
+console.log(data,'请求数据');
 
 	let areaMap = {
 		"110000": "北京",
@@ -585,22 +572,27 @@ const createDensityOption = (data, ratio) => {
 	var _wrapper = function(data) {
 		var result = [];
 		for(var item in data) {
-			result.push({
-				"name" : areaMap[""+item] || item,
-				"value" : data["" + item]
-			})
+			if(item !== '100000'){
+				result.push({
+					"name" : areaMap[""+item] || item,
+					"value" : data["" + item]
+				})
+			}
+
+
 		}
 		return result;
 	};
 
 
 	datas = _wrapper(data);
-
-	return renderDensityOption('', datas, ratio);
+console.log(datas,'处理后的数据');
+	return renderDensityOption(seectionName, datas, ratio);
 
 }
 
 const renderDensityOption = (seectionName,datas,max) => {
+	console.log(max);
 	var option = {
 	    title: {
 	        text: '',
@@ -609,7 +601,7 @@ const renderDensityOption = (seectionName,datas,max) => {
 	    },
 	    tooltip : {
     		trigger: 'item',
-				 show:true,
+				// show:true,
     		formatter: function(params,ticket,callback) {
     				if(params.value) {
     						return params.name + ": " + params.value;
@@ -619,7 +611,7 @@ const renderDensityOption = (seectionName,datas,max) => {
 	    },
 	    legend: {
 	        orient: 'vertical',
-	        left: 'left',
+	        left: 'left'
 	    },
 	    grid:{
 	    	left:'4%'
@@ -630,7 +622,11 @@ const renderDensityOption = (seectionName,datas,max) => {
 	        left: '20',
 	        top: 'bottom',
 	        text: ['高','低'],           // 文本，默认为数值文本
-	        calculable: true
+	        calculable: true,
+					color:[
+						'#075da6',
+						'#EEF5FA'
+					]
 	    },
 	    toolbox: {
 	        show: false,
@@ -643,6 +639,7 @@ const renderDensityOption = (seectionName,datas,max) => {
 	            saveAsImage: {}
 	        }
 	    },
+
 		series : [
 			{
 				name: seectionName,
@@ -651,17 +648,19 @@ const renderDensityOption = (seectionName,datas,max) => {
 				roam: false,
 				showLegendSymbol:false,
 				label: {
-	               normal: {
-	                   show: false
-	               },
-	               emphasis: {
-	                    show: true,
-	               }
-	            },
+           normal: {
+              show: false
+           },
+           emphasis: {
+                show: true,
+           }
+	      },
 				data : datas
 			}
-		],
+		]
 	};
+	console.log(option,'构建好的视图option');
+
 	return option;
 }
 

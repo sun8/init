@@ -8,7 +8,7 @@
             <i class="bg-green"></i>
             <div class="widget-thumb-body">
               <span class="widget-thumb-subtitle"></span>
-              <span class="widget-thumb-body-stat">{{Math.round(totaInUKEnterprises.ent/10000)}}万</span>
+              <span class="widget-thumb-body-stat">{{totaInUKEnterprises.ent}}万</span>
             </div>
           </div>
         </div>
@@ -20,7 +20,7 @@
             <i class="bg-red"></i>
             <div class="widget-thumb-body">
               <span class="widget-thumb-subtitle"></span>
-              <span class="widget-thumb-body-stat">{{Math.round(totaInUKEnterprises.ind/10000)}}万</span>
+              <span class="widget-thumb-body-stat">{{totaInUKEnterprises.ind}}万</span>
             </div>
           </div>
         </div>
@@ -32,7 +32,7 @@
             <i class="bg-purple"></i>
             <div class="widget-thumb-body">
               <span class="widget-thumb-subtitle"></span>
-              <span class="widget-thumb-body-stat">{{Math.round(totaInUKEnterprises.code/10000)}}万</span>
+              <span class="widget-thumb-body-stat">{{totaInUKEnterprises.code}}万</span>
             </div>
           </div>
         </div>
@@ -44,7 +44,7 @@
             <i class="bg-blue"></i>
             <div class="widget-thumb-body">
               <span class="widget-thumb-subtitle"></span>
-              <span class="widget-thumb-body-stat">{{Math.round(totaInUKEnterprises.entYear/10000)}}万</span>
+              <span class="widget-thumb-body-stat">{{totaInUKEnterprises.entYear}}万</span>
             </div>
           </div>
         </div>
@@ -65,6 +65,7 @@
         <grid-item
            class="grid_item"
            v-for="(item, index) in layout.slice(0,5)"
+           :key="item.i"
            :x="item.x"
            :y="item.y"
            :w="item.w"
@@ -79,14 +80,14 @@
                 <div class="echarts-vue">
                   <i class="el-icon-loading loadingStyle" v-if="loading[index]"></i>
 
-                    <chart
-                   :options="chartOptions[index]"
-                   auto-resize
-                   :ref="item.refs"
-                   class="vue-echart"
-                     v-else
+                    <ECharts
+                       :options="chartOptions[index]"
+                       auto-resize
+                       :ref="item.refs"
+                       class="vue-echart"
+                       v-else
 
-                   ></chart>
+                   ></ECharts>
 
 
    					    </div>
@@ -108,6 +109,7 @@
            <div class="gridBlock">
              <div class="gridBlockMap">
                <h2>{{chartOptionsTitle[5]}}</h2>
+
                <el-tabs
                v-model="activeName2"
                type="card"
@@ -128,9 +130,9 @@
    					  <div class="echarts-vue">
                 <i class="el-icon-loading loadingStyle" v-if="loading[5]"></i>
 						    <ECharts
-						    :options="chartOptions[5]"
-						    auto-resize
-						    :ref="layout[5].refs"
+  						    :options="chartOptions[5]"
+  						    auto-resize
+  						    :ref="layout[5].refs"
 						      v-else
 						     ></ECharts>
    					  </div>
@@ -144,9 +146,6 @@
 
 </template>
 <script>
-  //引入头部列表
-  // import Headers from '../../components/Headers';
-
   // 引入请求函数
 import {
 	getLatestChangeStat,
@@ -185,24 +184,38 @@ import {
   import {GridLayout,GridItem} from 'vue-grid-layout';
 
   import ECharts from 'vue-echarts/components/ECharts.vue'
-  import chart from 'Vue-eCharts';
+  import chart from 'Vue-ECharts';
+  // import chart from 'vue-echarts/components/ECharts.vue';
 //绘制图表
+  // import 'echarts/lib/chart/bar'
+  // import 'echarts/lib/chart/pie'
+  // import 'echarts/lib/chart/line'
+  // import 'echarts/lib/chart/radar'
+  // import 'echarts/lib/chart/map'
+  // import 'echarts/lib/component/legend'
+  // import 'echarts/lib/component/visualMap'
+  // import 'echarts/lib/component/polar'
   import 'echarts/lib/chart/bar'
-  import 'echarts/lib/chart/pie'
   import 'echarts/lib/chart/line'
-  import 'echarts/lib/chart/radar'
+  import 'echarts/lib/chart/pie'
   import 'echarts/lib/chart/map'
-  import 'echarts/lib/component/legend'
-  import 'echarts/lib/component/visualMap'
+  import 'echarts/lib/chart/radar'
+  import 'echarts/lib/chart/scatter'
+  import 'echarts/lib/chart/effectScatter'
+  import 'echarts/lib/component/tooltip'
   import 'echarts/lib/component/polar'
-
+  import 'echarts/lib/component/geo'
+  import 'echarts/lib/component/legend'
+  import 'echarts/lib/component/title'
+  import 'echarts/lib/component/visualMap'
+  // built-in theme
+  import 'echarts/theme/dark'
   // Map of China
   import chinaMap from '../../common/data/china.json'
-
+  import theme from '../../common/data/theme.json'
 
   // registering map data
   ECharts.registerMap('china', chinaMap)
-
   export default {
     components:{
       GridLayout,
@@ -231,20 +244,20 @@ import {
         layout: this.getUIState(),
 
 		    totaInUKEnterprises: {
-          ent:null,
-          ind:null,
-          code:null,
-          entYear:null
+          ent:0,
+          ind:0,
+          code:0,
+          entYear:0
         },
         loading:[true,true,true,true,true,true],
-        chartOptions: [null, null, null, null, null,null],
+        chartOptions: [{}, {}, {}, {}, {},{}],
         chartOptionsTitle:['按行业分类企业数量TOP10','整体概览','企业注册资本','按企业注册时间查询总量','指标概要','变更趋势'],
 
         activeName2: 'first',
         mapData:{
-          a:null,
-            b:null,
-              c:null
+          monitor:{},
+          change:{},
+          risk:{}
         },
         timer:null
         // autoResize:true
@@ -262,8 +275,8 @@ import {
   		this.getRadarMap();
 
   		this.getMonitorDensity();
-      // this.getChangeDensity();
-      // this.getRiskDensity();
+      this.getChangeDensity();
+      this.getRiskDensity();
 
   		this.getEnterpriseCapitalRegistration();
   		this.getEnterpriseQquantity();
@@ -312,7 +325,7 @@ import {
         }else {
           this.$refs[ele][0].resize({width: newWPx, height:newHPx-56})
         }
-        console.log("MOVED i=" + i + ", H=" + newH + ", W=" + newW);
+        // console.log("MOVED i=" + i + ", H=" + newH + ", W=" + newW);
 
         this.layout[i].w = newW;
         this.layout[i].h = newH;
@@ -323,7 +336,7 @@ import {
           this.layout[i].x = newX;
           this.layout[i].y = newY;
           this.setUIState(this.layout);
-            console.log("MOVED i=" + i + ", X=" + newX + ", Y=" + newY);
+            // console.log("MOVED i=" + i + ", X=" + newX + ", Y=" + newY);
         },
 
   //获取本地布局参数
@@ -340,27 +353,16 @@ import {
       handleClick(tab) {
         switch (tab.label) {
           case "监控密度":
-          // 监控密度
-          console.log('监控密度');
-            this.getMonitorDensity()
-            // this.chartOptions[5] = this.mapData.a;
+            this.chartOptions[5] = this.mapData.monitor;
           break;
           case "变更密度":
-          // 变更密度
-            console.log('变更密度');
-            this.getChangeDensity();
-            // this.chartOptions[5] = this.mapData.b;
+            this.chartOptions[5] = this.mapData.change;
           break;
           case "风险密度":
-          // 风险密度
-            console.log("风险密度");
-            this.getRiskDensity();
-            // this.chartOptions[5] = this.mapData.c;
+            this.chartOptions[5] = this.mapData.risk;
           break;
           default:
-            console.log('监控密度');
-            this.getMonitorDensity()
-            // this.chartOptions[5] = this.mapData.a;
+            this.chartOptions[5] = this.mapData.monitor;
         }
       },
 
@@ -371,6 +373,9 @@ import {
         getTotaInUKEnterprises(({code,result})=>{
           if(code!==200) return;
           let totaInUKEnterprises = buildTotaInUKEnterprisesOption(result);
+          for (var key in totaInUKEnterprises){
+            totaInUKEnterprises[key] = Math.round(totaInUKEnterprises[key]/10000)
+          }
           this.totaInUKEnterprises = totaInUKEnterprises;
         })
       },
@@ -424,10 +429,8 @@ import {
     	getMonitorDensity(){
     		getMonitorDensity( ({success, statResult,proviceCount})=>{
     				if(!success) return;
-              // console.log(statResult);
-    				this.chartOptions[5] = buildMonitorDensityOption(statResult);
+            this.chartOptions[5] = this.mapData.monitor = buildMonitorDensityOption(statResult);
             this.loading[5] = false;
-          // this.mapData.a = buildMonitorDensityOption(statResult);
     		} );
     	},
 
@@ -435,10 +438,8 @@ import {
     	getChangeDensity(){
     		getChangeDensity( ({success, statResult,proviceCount})=>{
     				if(!success) return;
-            // console.log(statResult);
-    				this.chartOptions[5] = buildChangeDensityOption(statResult);
+            this.mapData.change = buildChangeDensityOption(statResult);
             this.loading[5] = false;
-            // this.mapData.b = buildMonitorDensityOption(statResult);
     		} );
     	},
 
@@ -446,10 +447,8 @@ import {
     	getRiskDensity(){
     		getRiskDensity( ({success, statResult,proviceCount})=>{
     				if(!success) return;
-            // console.log(statResult);
-    				this.chartOptions[5] = buildRiskDensityOption(statResult);
+            this.mapData.risk = buildRiskDensityOption(statResult);
             this.loading[5] = false;
-            // this.mapData.c = buildMonitorDensityOption(statResult);
     		} );
     	}
 
@@ -490,8 +489,8 @@ section{
     h4{
 				height: 18px;
         font-size: 16px;
-        font-weight: 600;
-        color: #8e9daa;
+        font-weight: 800;
+        color: #5E7386;
         margin: 0 0 20px;
         font-family: "Open Sans",sans-serif;
         line-height: 1.1;
@@ -559,7 +558,7 @@ section{
   height: auto;
   h2{
     height: 56px;
-    font: 16px/56px "微软雅黑";
+    font:800 16px/56px "微软雅黑";
     text-indent: 20px;
     color: #5E7386;
   }
@@ -572,6 +571,7 @@ section{
   }
 
 }
+
 .echarts{
   width:100% !important;
 
