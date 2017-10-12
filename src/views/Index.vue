@@ -431,46 +431,48 @@
                                 </span>
                                 </router-link>
                             </li>
-                             <li class="nav-item start jiluAllLi" @click="jiluAllLi('专利')" :class="{active:mylink('/patent')}">
-                                <router-link to="/patent">
-                                <span class="nav-link ">
-                                    <span class="title">专利</span>
-                                    <span class="badge badge-success"></span>
-                                </span>
-                                </router-link>
-                            </li>
-                             <li class="nav-item start jiluAllLi" @click="jiluAllLi('招聘')" :class="{active:mylink('/job')}">
-                                <router-link to="/job">
-                                <span class="nav-link ">
-                                    <span class="title">招聘</span>
-                                    <span class="badge badge-success"></span>
-                                </span>
-                                </router-link>
-                            </li>
-                             <li class="nav-item start jiluAllLi" @click="jiluAllLi('招投标')" :class="{active:mylink('/bid')}">
-                                <router-link to="/bid">
-                                <span class="nav-link ">
-                                    <span class="title">招投标</span>
-                                    <span class="badge badge-success"></span>
-                                </span>
-                                </router-link>
-                            </li>
-                             <li class="nav-item start jiluAllLi" @click="jiluAllLi('上市')" :class="{active:mylink('/list')}">
-                                <router-link to="/list">
-                                <span class="nav-link ">
-                                    <span class="title">上市</span>
-                                    <span class="badge badge-success"></span>
-                                </span>
-                                </router-link>
-                            </li>
-                             <li class="nav-item start jiluAllLi" @click="jiluAllLi('ICP')" :class="{active:mylink('/icp')}">
-                                <router-link to="/icp">
-                                <span class="nav-link ">
-                                    <span class="title">ICP</span>
-                                    <span class="badge badge-success"></span>
-                                </span>
-                                </router-link>
-                            </li>
+                            <!--暂时屏蔽未开发功能,勿删-->
+                             <!--<li class="nav-item start jiluAllLi" @click="jiluAllLi('专利')" :class="{active:mylink('/patent')}">-->
+                                <!--<router-link to="/patent">-->
+                                <!--<span class="nav-link ">-->
+                                    <!--<span class="title">专利</span>-->
+                                    <!--<span class="badge badge-success"></span>-->
+                                <!--</span>-->
+                                <!--</router-link>-->
+                            <!--</li>-->
+                             <!--<li class="nav-item start jiluAllLi" @click="jiluAllLi('招聘')" :class="{active:mylink('/job')}">-->
+                                <!--<router-link to="/job">-->
+                                <!--<span class="nav-link ">-->
+                                    <!--<span class="title">招聘</span>-->
+                                    <!--<span class="badge badge-success"></span>-->
+                                <!--</span>-->
+                                <!--</router-link>-->
+                            <!--</li>-->
+                             <!--<li class="nav-item start jiluAllLi" @click="jiluAllLi('招投标')" :class="{active:mylink('/bid')}">-->
+                                <!--<router-link to="/bid">-->
+                                <!--<span class="nav-link ">-->
+                                    <!--<span class="title">招投标</span>-->
+                                    <!--<span class="badge badge-success"></span>-->
+                                <!--</span>-->
+                                <!--</router-link>-->
+                            <!--</li>-->
+                             <!--<li class="nav-item start jiluAllLi" @click="jiluAllLi('上市')" :class="{active:mylink('/list')}">-->
+                                <!--<router-link to="/list">-->
+                                <!--<span class="nav-link ">-->
+                                    <!--<span class="title">上市</span>-->
+                                    <!--<span class="badge badge-success"></span>-->
+                                <!--</span>-->
+                                <!--</router-link>-->
+                            <!--</li>-->
+                             <!--<li class="nav-item start jiluAllLi" @click="jiluAllLi('ICP')" :class="{active:mylink('/icp')}">-->
+                                <!--<router-link to="/icp">-->
+                                <!--<span class="nav-link ">-->
+                                    <!--<span class="title">ICP</span>-->
+                                    <!--<span class="badge badge-success"></span>-->
+                                <!--</span>-->
+                                <!--</router-link>-->
+                            <!--</li>-->
+                            <!--./暂时屏蔽未开发功能-->
                         </ul>
 
                     </li>
@@ -809,9 +811,9 @@
 
             var n=10;
             $('.liulanBoxL').click(()=>{
-                console.log($('.liulanBoxC').outerWidth())
-                console.log($('.liulan').outerWidth())
-                console.log($('.liulanBoxC').outerWidth()-$('.liulan').outerWidth())
+//                console.log($('.liulanBoxC').outerWidth())
+//                console.log($('.liulan').outerWidth())
+//                console.log($('.liulanBoxC').outerWidth()-$('.liulan').outerWidth())
                 n++
                $('.liulan').css({"left":($('.liulan').position().left-n)+'px'})
                if($('.liulan').position().left<=($('.liulanBoxC').outerWidth()-$('.liulan').outerWidth())){
@@ -849,14 +851,14 @@
                   var locataionHRem= window.location.href;
                   var nRem= locataionHRem.indexOf('#/');
                   var pathHrefRem= locataionHRem.substring(nRem+1);
-                console.log(removeArr[i].pathHref.substring(1))
-                console.log(pathHrefRem)
+//                console.log(removeArr[i].pathHref.substring(1))
+//                console.log(pathHrefRem)
                 if(((removeArr.indexOf(removeArr[i])+1) < removeArr.length) && (removeArr[i].pathHref.substring(1) == pathHrefRem )){
-                    console.log(removeArr[i+1].pathHref.substring(1))
+                    //console.log(removeArr[i+1].pathHref.substring(1))
                     this.$router.push(removeArr[i+1].pathHref.substring(1))
                     this.newIndex = removeArr[i+1].name
                 }else if((removeArr.indexOf(removeArr[i])+1) == removeArr.length){
-                    console.log(removeArr[i-1].pathHref.substring(1))
+                    //console.log(removeArr[i-1].pathHref.substring(1))
                     this.$router.push(removeArr[i-1].pathHref.substring(1))
                     this.newIndex = removeArr[i-1].name
                 }else if(removeArr[i].pathHref.substring(1) != pathHrefRem ){
@@ -877,7 +879,7 @@
        //动态切换class为true和false解决当前状态。
          //动态切换class为true和false解决当前状态。
         this.newIndex = name;
-        console.log(name);
+        //console.log(name);
         $(".jiluAllLi").css({"background":""});
         //点击上Tab判断显示当前最新浏览状态
         var ah= '';
@@ -891,30 +893,27 @@
             ah=pa.substring(1)
          }
 
-         console.log(ah);
+         //console.log(ah);
         this.$router.push(ah);
 
       },
       //退出
       tuiChu(){
-
         this.axios.post(this.api.entBase+"/logout").then((res)=>{
             console.log(res)
-                this.$router.push({name:'登录'})
-                localStorage.removeItem('token');
-                localStorage.removeItem('tokenF');
-                localStorage.removeItem('username');
+            this.$router.push({name:'登录'})
+            localStorage.removeItem('token');
+            localStorage.removeItem('tokenF');
+            localStorage.removeItem('username');
         }).catch(err => {
              console.log(err)
-
-
         })
 
 
       },
       // 历史查询
       history(){
-        console.log("这里是查询按钮")
+        //console.log("这里是查询按钮")
         this.jiluAllLi("历史查询")
       },
       zquery(){
@@ -925,7 +924,7 @@
         sessionStorage.setItem('flays',1)
         //判断token
          this.axios.get(this.api.entBase+'/list?key='+encodeURIComponent('北京中数智汇科技股份有限公司')).then((res) => {
-            console.log(res)
+            //console.log(res)
              if(res.data.code == 400){
                 window.swal({
                   title: "确认",
@@ -942,7 +941,7 @@
                 this.$router.push({path:"/"});
             }
           }).catch(err => {
-            console.log(err);
+            //console.log(err);
 
 
           })

@@ -4,14 +4,14 @@
     <!-- <input v-date-time class="time1" type="text"  placeholder="开始日期" v-model="queryForm.startdate" readonly>
     <input v-date-time class="time2" type="text"  placeholder="结束日期" v-model="queryForm.endDate" readonly> -->
     <!-- <button @click='SDate()'>搜索</button> -->
-    <el-date-picker v-model="value1" type="date" placeholder="选择日期" :picker-options="pickerOptions0">
+    <el-date-picker v-model="value1" type="date" placeholder="选择日期">
     </el-date-picker>
-    <el-date-picker v-model="value2" type="date" placeholder="选择日期" :picker-options="pickerOptions0">
+    <el-date-picker v-model="value2" type="date" placeholder="选择日期">
     </el-date-picker>
     <input type="text" placeholder="输入内容" class="input_content" />
     <el-button @click='SDate()'>搜索</el-button>
     <div>
-        <table class="table_father">
+        <table class="tableList" width="100%"  cellspacing="0" border="1" >
             <thead>
                 <tr>
                     <td>内容</td>
@@ -103,6 +103,10 @@
               this.disRight = false;
               return ;
           }
+          if(this.ta_history.length == 20){
+              this.disLeft = false;
+              this.disRight = false;
+          }
       },
       // 下一页获取数据，传输开始时间以及结束时间，还有搜索内容
       nextPage(){
@@ -113,6 +117,9 @@
           console.log(res);
           this.ta_history = res.data.result.historyList;
             console.log(this.ta_history);
+            if(this.page > 1){
+                this.disLeft = false;
+            }
             if(this.ta_history.length < 20){
               this.disLeft = false;
               this.disRight = true;
@@ -130,7 +137,31 @@
   }
 </script>
 
-<style lang="scss" type="text/css">
+<style lang="scss">
+    .monitor-change-list{
+        background: #fff;
+        padding:20px 10px;
+        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.05);
+    }
+    .monitor-change-list .tableList{
+        margin:20px 0;
+    }
+    .monitor-change-list .tableList thead td{
+        background: #F3F7FA;
+        height: 44px;
+        line-height: 30px;
+        padding: 0 5px;
+        border:1px solid #E6E6E6;
+        color: #5E7386;
+        font-weight: bold;
+        text-align: center;
+    }
+    .monitor-change-list .tableList tbody td{
+        line-height: 30px;
+        border:1px solid #E6E6E6;
+        padding: 5px 8px 5px 8px;
+        text-align: center;
+    }
    .table_father{
      width: 100%;
      text-align: center;

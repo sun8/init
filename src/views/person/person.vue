@@ -707,7 +707,7 @@ export default {
   .ser-btn .icon-ser{
     position: absolute;
     left:12px;
-    top:9px;
+    top:11px;
     width:16px;
     height: 16px;
     background: url(../../assets/search_icon.png) no-repeat;

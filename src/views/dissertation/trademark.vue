@@ -168,9 +168,15 @@ export default {
   },
   mounted(){
     this.zquery();
+
   },
   methods:{
-
+    //回到顶部
+    _toTop(){
+     $('body,html').animate({
+         scrollTop:0,
+     },300)
+    },
     _toggleClick(){
       this.seen=!this.seen;
       if(this.seen==true){
@@ -230,6 +236,7 @@ export default {
     },
     _goTrademarkPage(data){
         this.curPage = data.page;
+        this._toTop();
         this._getTradeMarkInfo();
     },
     zquery(){

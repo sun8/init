@@ -42,7 +42,7 @@ let routes = [
   	name: '登录'
   },
   {
-  	path: '/',
+  	path: '/home',
   	component:Index,
   	name: '管理驾驶舱',
   	redirect: '/guanli',
@@ -68,7 +68,7 @@ let routes = [
     ]
   },
   {
-    path: '/',
+    path: '/home',
     component: Index,
     name: '企业视图',
     redirect: '/entry',
@@ -93,7 +93,7 @@ let routes = [
 
 
   {
-  	path: '/',
+  	path: '/home',
   	component:Index,
   	name: '高管探查',
   	redirect: '/person',
@@ -107,7 +107,7 @@ let routes = [
   },
 
   {
-    path: '/',
+    path: '/home',
     component: Index,
     name: '风铃',
     redirect: '/change',
@@ -165,7 +165,7 @@ let routes = [
 		]
   },
   {
-    path: '/',
+    path: '/home',
     component: Index,
     name: '关联洞察',
     redirect: '/overview',
@@ -199,7 +199,7 @@ let routes = [
 	]
   },
     {
-        path: '/',
+        path: '/home',
         component: Index,
         name: '专题库',
         redirect: '/alter',
@@ -253,7 +253,7 @@ let routes = [
         ]
     },
     {
-        path: '/',
+        path: '/home',
         component: Index,
         name: '批处理',
         redirect: '/companyQuery',
@@ -271,7 +271,7 @@ let routes = [
 
         ]
     },{
-        path: '/',
+        path: '/home',
         component: Index,
         name: '历史查询',
         children:[

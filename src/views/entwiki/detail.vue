@@ -49,8 +49,9 @@
               <li @click="lishiTo">历史变更 <span>{{alterCount}}</span></li>
               <li @click="fenzhiTo">分支机构 <span>{{filiationCount}}</span></li>
               <li @click="duiwaiTo">对外投资 <span>{{entinvcount}}</span></li>
-              <li @click="farenduiwaiTo">法定代表人对外投资 <span>{{FRINV.length}}</span></li>
-              <li @click="farenGduiwaiTo">法定代表人其他公司任职 <span>{{FRPOSITION.length}}</span></li>
+              <li @click="farenduiwaiTo">法定代表人对外投资 <span>{{frinvCount}}</span></li>
+              <li @click="farenGduiwaiTo">法定代表人其他公司任职 <span>{{frpositionCount}}</span></li>
+              <li @click="qingsuanTo">清算信息 <span>{{liquiDationCount}}</span></li>
             </ul>
           </div>
           <div class="gongshangInof">
@@ -82,7 +83,7 @@
               </thead>
               <tbody>
               <tr v-for="item in PERSON">
-                <td>{{item.PERNAME}}</td><td>{{item.POSITION}}</td>
+                <td style="cursor:pointer;" @click="_goPerson(item.ENTNAME,item.PERNAME)">{{item.PERNAME}}</td><td>{{item.POSITION}}</td>
                 <td>{{item.SEX}}</td>
               </tr>
               </tbody>
@@ -125,7 +126,7 @@
               <ul class="clearfix lineghtSEtt">
                 <li><span class="jiujiujiu">企业名称：</span><span>{{item.ENTJGNAME}}</span></li>
                 <li><span class="jiujiujiu">注册号：</span><span>{{item.REGNO}}</span></li>
-                <li><span class="jiujiujiu">企业(机构)类型：</span><span>{{item.ENTTYPE}} </span>元</li></span>
+                <li><span class="jiujiujiu">企业(机构)类型：</span><span>{{item.ENTTYPE}} </span></li>
                 <li><span class="jiujiujiu">注册资本(万元)：</span><span>{{item.REGCAP}}</span></li>
                 <li><span class="jiujiujiu">注册资本币种：</span><span>{{item.REGCAPCUR}}</span></li>
                 <li><span class="jiujiujiu">企业状态：</span><span>{{item.ENTSTATUS}}</span></li></span>
@@ -142,13 +143,20 @@
                 <li><span class="jiujiujiu">出资方式：</span><span>{{item.CONFORM}}</span></li>
               </ul>
             </div>
-
-            <p class="gongshangInofH3 farenduiwaito">法定代表人对外投资<span class="count">{{FRINV.length}}</span></p>
+            <div class="page">
+              <pager
+                      mode="event"
+                      :total-page="entinvTotalPage"
+                      :init-page="entinvCurpage"
+                      @go-page="_goEntinvPage">
+              </pager>
+            </div>
+            <p class="gongshangInofH3 farenduiwaito">法定代表人对外投资<span class="count">{{frinvCount}}</span></p>
             <div class="guquandongjieBox guquandongjieBoxzhixingren tableList" v-for="item in FRINV">
               <ul class="clearfix lineghtSEtt">
                 <li><span class="jiujiujiu">企业名称：</span><span>{{item.ENTNAME}}</span></li>
                 <li><span class="jiujiujiu">注册号：</span><span>{{item.REGNO}}</span></li>
-                <li><span class="jiujiujiu">企业(机构)类型：</span><span>{{item.ENTTYPE}} </span>元</li></span>
+                <li><span class="jiujiujiu">企业(机构)类型：</span><span>{{item.ENTTYPE}} </span></li>
                 <li><span class="jiujiujiu">注册资本(万元)：</span><span>{{item.REGCAP}}</span></li>
                 <li><span class="jiujiujiu">注册资本币种：</span><span>{{item.REGCAPCUR}}</span></li>
                 <li><span class="jiujiujiu">企业状态：</span><span>{{item.ENTSTATUS}}</span></li></span>
@@ -165,17 +173,24 @@
                 <li><span class="jiujiujiu">出资方式：</span><span>{{item.CONFORM}}</span></li>
               </ul>
             </div>
-
-            <p class="gongshangInofH3 farenGduiwaito">法定代表人其他公司任职 <span class="count">{{FRPOSITION.length}}</span></p>
+            <div class="page">
+              <pager
+                      mode="event"
+                      :total-page="frinvTotalPage"
+                      :init-page="frinvCurpage"
+                      @go-page="_goFrinvPage">
+              </pager>
+            </div>
+            <p class="gongshangInofH3 farenGduiwaito">法定代表人其他公司任职 <span class="count">{{frpositionCount}}</span></p>
             <div class="guquandongjieBox guquandongjieBoxzhixingren tableList" v-for="item in FRPOSITION">
               <ul class="clearfix lineghtSEtt">
                 <li><span class="jiujiujiu">企业名称：</span><span>{{item.ENTNAME}}</span></li>
                 <li><span class="jiujiujiu">注册号：</span><span>{{item.REGNO}}</span></li>
-                <li><span class="jiujiujiu">企业(机构)类型：</span><span>{{item.ENTTYPE}} </span>元</li></span>
+                <li><span class="jiujiujiu">企业(机构)类型：</span><span>{{item.ENTTYPE}} </span></li>
                 <li><span class="jiujiujiu">注册资本(万元)：</span><span>{{item.REGCAP}}</span></li>
                 <li><span class="jiujiujiu">注册资本币种：</span><span>{{item.REGCAPCUR}}</span></li>
-                <li><span class="jiujiujiu">企业状态：</span><span>{{item.ENTSTATUS}}</span></li></span>
-                <li><span class="jiujiujiu">登记机关：</span><span>{{item.REGORG}}</span></li></span>
+                <li><span class="jiujiujiu">企业状态：</span><span>{{item.ENTSTATUS}}</span></li>
+                <li><span class="jiujiujiu">登记机关：</span><span>{{item.REGORG}}</span></li>
                 <li><span class="jiujiujiu">职务：</span><span>{{item.POSITION}}</span></li>
                 <li><span class="jiujiujiu">是否法定代表人：</span><span>{{item.LEREPSIGN}}</span></li>
                 <li><span class="jiujiujiu">风险提示：</span><span>{{item.ALERT_DIS}}</span></li>
@@ -186,35 +201,128 @@
                 <li><span class="jiujiujiu">吊销日期:</span><span>{{item.REVDATE}}</span></li>
               </ul>
             </div>
+            <div class="page">
+              <pager
+                      mode="event"
+                      :total-page="frpositionTotalPage"
+                      :init-page="frpositionCurpage"
+                      @go-page="_goFrpositionPage">
+              </pager>
+            </div>
+            <p class="gongshangInofH3 qingsuanto">清算信息<span class="count">{{liquiDationCount}}</span></p>
+            <table class="tableList" width="100%"  cellspacing="0" border="1" v-if="liquiDation && liquiDation.length != 0">
+              <thead>
+              <td>清算负责人</td>
+              <td>清算组成员</td>
+              <td>清算完结情况</td>
+              <td>清算完结日期</td>
+              <td>债务承接人</td>
+              <td>债权承接人</td>
+              <td>联系电话</td>
+              <td>地址</td>
+              </thead>
+              <tbody>
+              <tr v-for="(item,index) in liquiDation">
+                <td>{{item.LIGPRINCIPAL || "暂无数据"}}</td>
+                <td>{{item.LIQMEN || "暂无数据"}}</td>
+                <td>{{item.LIGST || "暂无数据"}}</td>
+                <td>{{item.LIGENDDATE || "暂无数据"}}</td>
+                <td>{{item.DEBTTRANEE || "暂无数据"}}</td>
+                <td>{{item.CLAIMTRANEE || "暂无数据"}}</td>
+                <td>{{item.TEL || "暂无数据"}}</td>
+                <td>{{item.ADDR || "暂无数据"}}</td>
+              </tr>
+              </tbody>
+            </table>
           </div>
         </div>
         <!--风险信息-->
         <div class="contabListDiv">
           <div class="gongshangList">
             <ul class="clearfix">
-              <li @click="guquanchuzhiTo" class="gongshangActive">股权出质 <span>{{impawnCount}}</span></li>
+              <li @click="guquanchuzhiTo" class="gongshangActive">股权出质 <span>{{STOCKPAWNCount}}</span></li>
               <li @click="guquandongjieTo">股权冻结 <span>{{sharefrostCount}}</span></li>
               <li @click="jingyingyichangTo">经营异常 <span>{{exceptCount}}</span></li>
               <li @click="xingzhenchufaTo">行政处罚 <span>{{caseCount}}</span></li>
               <li @click="beizhixingrenTo">被执行人 <span>{{punishedCount}}</span></li>
               <li @click="shixinxinxiTo">失信信息 <span>{{breakCount}}</span></li>
-              <li @click="dongchandiyaTo">动产抵押 <span>{{mortCount}}</span></li>
+              <li @click="dongchandiyaTo">动产抵押 <span>{{MORTGAGEREGCount}}</span></li>
+              <li @click="weifa">企业严重违法 <span>{{breakLawCount}}</span></li>
             </ul>
           </div>
           <div class="gongshangInof">
-            <p class="gongshangInofH2 guquanchuzhito">股权出质 <span class="count">{{impawnCount}}</span></p>
-            <table class="tableList" width="100%"  cellspacing="0" border="1"  v-if="SHARESIMPAWN && SHARESIMPAWN.length != 0">
+            <p class="gongshangInofH2 guquanchuzhito">股权出质 <span class="count">{{STOCKPAWNCount}}</span></p>
+            <table class="tableList" width="100%"  cellspacing="0" border="1"  v-if="STOCKPAWN && STOCKPAWN.length != 0">
               <thead>
-            <td>序号</td><td>质权人</td><td>质权人类别</td><td>出资金额(万元)</td><td>出资审批部门</td><td>出资备案日期</td><td>出资截至日期</td>
-            </thead>
+                <td>序号</td>
+                <td>登记编号</td>
+                <td>出质人</td>
+                <!--<td>出质人证件/证件号</td>-->
+                <td>出质股权数额</td>
+                <td>质权人</td>
+                <td>质权人证件/证件号</td>
+                <td>登记日期</td>
+                <td>状态</td>
+                <!--<td>公示日期</td>-->
+                <td>详情</td>
+              </thead>
               <tbody>
-              <tr v-for="(item,index) in SHARESIMPAWN">
-                <td>{{index+1}}</td>
-                <td>{{item.IMPORG}}</td>
-                <td>{{item.IMPORGTYPE}}</td><td>{{item.IMPAM}}</td><td>{{item.IMPEXAEEP}}</td><td>{{item.IMPONRECDATE}}</td><td>{{item.IMPTO}}</td>
-              </tr>
+                <tr v-for="(item,index) in STOCKPAWN">
+                  <td>{{index+1}}</td>
+                  <td>{{item.STK_PAWN_REGNO}}</td>
+                  <td>{{item.STK_PAWN_CZPER}}</td>
+                  <!--<td width="80">{{item.STK_PAWN_CZCERNO}}</td>-->
+                  <td>{{item.STK_PAWN_CZAMT}}</td>
+                  <td width="170">{{item.STK_PAWN_ZQPER}}</td>
+                  <td>{{item.STK_PAWN_ZQCERNO}}</td>
+                  <td width="100">{{item.STK_PAWN_REGDATE}}</td>
+                  <td>{{item.STK_PAWN_STATUS}}</td>
+                  <!--<td width="100">{{item.STK_PAWN_DATE}}</td>-->
+                  <td style="color:#4AA6FF;cursor: pointer;" @click="_stockModelShow(item.URL)">查看</td>
+                </tr>
               </tbody>
             </table>
+            <!--股权出质详情弹窗-->
+            <el-dialog title="股权出质详细信息" v-model="stockVisible" :close-on-click-modal="false" class="stockpawn mask">
+              <div class="line"></div>
+              <div class="part1 mb20">
+                <p class="title">股权出质变更信息</p>
+                <div class="tip" v-if="STOCKPAWNALTArr.length == 0">暂无股权出质变更信息</div>
+                <table class="tableList" width="100%"  cellspacing="0" border="1" v-if="STOCKPAWNALTArr && STOCKPAWNALTArr.length != 0">
+                  <thead>
+                    <td>序号</td>
+                    <td>变更内容</td>
+                    <td>变更日期</td>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(item,index) in STOCKPAWNALTArr">
+                      <td>{{index+1}}</td>
+                      <td>{{item.STK_PAWN_BGNR}}</td>
+                      <td>{{item.STK_PAWN_BGRQ}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="part2">
+                <p class="title">股权出质注销信息</p>
+                <div class="tip" v-if="STOCKPAWNREVArr.length == 0">暂无股权出质注销信息</div>
+                <table class="tableList" width="100%"  cellspacing="0" border="1" v-if="STOCKPAWNREVArr && STOCKPAWNREVArr.length != 0">
+                  <thead>
+                    <td>序号</td>
+                    <td>注销日期</td>
+                    <td>注销原因</td>
+                  </thead>
+                  <tbody>
+                  <tr v-for="(item,index) in STOCKPAWNREVArr">
+                    <td>{{index+1}}</td>
+                    <td>{{item.STK_PAWN_DATE}}</td>
+                    <td>{{item.STK_PAWN_RES}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </el-dialog>
+            <!--./股权出质详情弹窗-->
             <p class="gongshangInofH3 guquandongjieto">股权冻结<span class="count">{{sharefrostCount}}</span></p>
             <!--<span class="grey" v-if="SHARESFROST.length == 0">(暂无信息)</span>-->
             <div class="guquandongjieBox tableList" v-for="item in SHARESFROST">
@@ -261,11 +369,11 @@
               <ul class="clearfix lineghtSEtt">
                 <li><span class="jiujiujiu">被执行人：</span><span>{{item.INAMECLEAN}}</span></li>
                 <li><span class="jiujiujiu">组织机构代码：</span><span>{{item.CARDNUMCLEAN}}</span></li>
-                <li><span class="jiujiujiu">执行标的：</span><span>{{item.EXECMONEY}} </span>元</li></span>
+                <li><span class="jiujiujiu">执行标的：</span><span>{{item.EXECMONEY}} </span>元</li>
                 <li><span class="jiujiujiu">案件状态：</span><span>{{item.CASESTATE}}</span></li>
                 <li><span class="jiujiujiu">执行法院：</span><span>{{item.COURTNAME}}</span></li>
-                <li><span class="jiujiujiu">省       份：</span><span>{{item.AREANAMECLEAN}}</span></li></span>
-                <li><span class="jiujiujiu">立案时间：</span><span>{{item.REGDATECLEAN}}</span></li></span>
+                <li><span class="jiujiujiu">省       份：</span><span>{{item.AREANAMECLEAN}}</span></li>
+                <li><span class="jiujiujiu">立案时间：</span><span>{{item.REGDATECLEAN}}</span></li>
                 <li v-if="item.FOCUSNUMBER"><span class="jiujiujiu">关注次数：</span><span>{{item.FOCUSNUMBER}}</span></li>
               </ul>
             </div>
@@ -295,7 +403,174 @@
                 <li><span class="jiujiujiu">发布时间：</span><span>{{item.PUBLISHDATECLEAN}}</span></li>
               </ul>
             </div>
-            <p class="gongshangInofH3 dongchandiyato">动产抵押<span class="count">{{mortCount}}</span></p>
+            <p class="gongshangInofH3 dongchandiyato">动产抵押<span class="count">{{MORTGAGEREGCount}}</span></p>
+            <table class="tableList" width="100%"  cellspacing="0" border="1" >
+              <thead>
+                <td>序号</td>
+                <td>登记编号</td>
+                <td>登记日期</td>
+                <td>登记机关</td>
+                <td>被担保债权数额</td>
+                <td>状态</td>
+                <td>详情</td>
+              </thead>
+              <tbody>
+                <tr v-for="(item,index) in MORTGAGEREG">
+                  <td>{{index+1}}</td>
+                  <td>{{item.MAB_REGNO}}</td>
+                  <td>{{item.MAB_REG_DATE}}</td>
+                  <td>{{item.MAB_REG_ORG}}</td>
+                  <td>{{item.MAB_GUAR_AMT}}</td>
+                  <td>{{item.STATUS}}</td>
+                  <td style="color:#4AA6FF;cursor: pointer;" @click="_morgModelShow(item.MAB_REGNO)">查看</td>
+                </tr>
+              </tbody>
+            </table>
+            <!--动产抵押详情弹窗-->
+            <el-dialog title="动产抵押详细信息" v-model="morgVisible" :close-on-click-modal="false" class="morg mask">
+              <div class="line"></div>
+              <div class="part1 mb20">
+                <p class="title">动产抵押登记信息</p>
+                <div class="tip" v-if="MORTGAGEREGArr.length == 0">暂无动产抵押登记信息</div>
+                <table class="tableList" width="100%"  cellspacing="0" border="1" v-if="MORTGAGEREGArr && MORTGAGEREGArr.length != 0">
+                  <thead>
+                    <td>序号</td>
+                    <td>登记编号</td>
+                    <td>登记日期</td>
+                    <td>登记机关</td>
+                    <td>省份代码</td>
+                    <td>状态</td>
+                    <td>被担保债权数额</td>
+                    <td>担保范围</td>
+                    <td>被担保债权种类</td>
+                    <td>债务开始日期</td>
+                    <td>债务结束日期</td>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(item,index) in MORTGAGEREGArr">
+                      <td>{{index+1}}</td>
+                      <td>{{item.MAB_REGNO}}</td>
+                      <td>{{item.MAB_REG_DATE}}</td>
+                      <td>{{item.MAB_REG_ORG}}</td>
+                      <td>{{item.NODENUM}}</td>
+                      <td>{{item.STATUS}}</td>
+                      <td>{{item.MAB_GUAR_AMT}}</td>
+                      <td>{{item.MAB_GUAR_RANGE}}</td>
+                      <td>{{item.MAB_GUAR_TYPE}}</td>
+                      <td>{{item.DEBT_SDATE}}</td>
+                      <td>{{item.DEBT_EDATE}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="part2 mb20">
+                <p class="title">抵押权人信息</p>
+                <div class="tip" v-if="MORTGAGEPERArr.length == 0">暂无抵押权人信息</div>
+                <table class="tableList" width="100%"  cellspacing="0" border="1" v-if="MORTGAGEPERArr && MORTGAGEPERArr.length != 0">
+                  <thead>
+                    <td>序号</td>
+                    <td>抵押权人名称</td>
+                    <td>抵押权人证照类型</td>
+                    <td>证照号码</td>
+                    <td>住所地</td>
+                  </thead>
+                  <tbody>
+                  <tr v-for="(item,index) in MORTGAGEPERArr">
+                    <td>{{index+1}}</td>
+                    <td>{{item.MAB_PER_NAME}}</td>
+                    <td>{{item.MAB_PER_CERTYPE}}</td>
+                    <td>{{item.MAB_PER_CERNO}}</td>
+                    <td>{{item.MAB_PER_DOM}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="part3 mb20">
+                <p class="title">被担保主债权信息</p>
+                <div class="tip" v-if="MORTGAGEDEBTArr.length == 0">暂无被担保主债权信息</div>
+                <table class="tableList" width="100%"  cellspacing="0" border="1" v-if="MORTGAGEDEBTArr && MORTGAGEDEBTArr.length != 0">
+                  <thead>
+                  <td>序号</td>
+                  <td>种类</td>
+                  <td>数额</td>
+                  <td>担保范围</td>
+                  <td>履行债务开始日期</td>
+                  <td>履行债务结束日期</td>
+                  <td>备注</td>
+                  </thead>
+                  <tbody>
+                  <tr v-for="(item,index) in MORTGAGEDEBTArr">
+                    <td>{{index+1}}</td>
+                    <td>{{item.MAB_DEBT_TYPE}}</td>
+                    <td>{{item.MAB_DEBT_AMT}}</td>
+                    <td>{{item.MAB_DEBT_RANGE}}</td>
+                    <td>{{item.DEBT_SDATE}}</td>
+                    <td>{{item.DEBT_EDATE}}</td>
+                    <td>{{item.MAB_DEBT_RMK}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="part4 mb20">
+                <p class="title">抵押物信息</p>
+                <div class="tip" v-if="MORTGAGEPAWNArr.length == 0">暂无抵押物信息</div>
+                <table class="tableList" width="100%"  cellspacing="0" border="1" v-if="MORTGAGEPAWNArr && MORTGAGEPAWNArr.length != 0">
+                  <thead>
+                  <td>序号</td>
+                  <td>抵押物名称</td>
+                  <td>所有权或使用权归属</td>
+                  <td>数量、质量、状况、所在地等情况</td>
+                  <td>备注</td>
+                  </thead>
+                  <tbody>
+                  <tr v-for="(item,index) in MORTGAGEPAWNArr">
+                    <td>{{index+1}}</td>
+                    <td>{{item.MAB_PAWN_NAME}}</td>
+                    <td>{{item.MAB_PAWN_OWNER}}</td>
+                    <td>{{item.MAB_PAWN_DETAILS}}</td>
+                    <td>{{item.MAB_PAWN_RMK}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="part5 mb20">
+                <p class="title">变更信息</p>
+                <div class="tip" v-if="MORTGAGEALTArr.length == 0">暂无变更信息</div>
+                <table class="tableList" width="100%"  cellspacing="0" border="1" v-if="MORTGAGEALTArr && MORTGAGEALTArr.length != 0">
+                  <thead>
+                  <td>序号</td>
+                  <td>变更日期</td>
+                  <td>变更内容</td>
+                  </thead>
+                  <tbody>
+                  <tr v-for="(item,index) in MORTGAGEALTArr">
+                    <td>{{index+1}}</td>
+                    <td>{{item.MAB_ALT_DATE}}</td>
+                    <td>{{item.MAB_ALT_DETAILS}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="part6">
+                <p class="title">注销信息</p>
+                <div class="tip" v-if="MORTGAGECANArr.length == 0">暂无注销信息</div>
+                <table class="tableList" width="100%"  cellspacing="0" border="1" v-if="MORTGAGECANArr && MORTGAGECANArr.length != 0">
+                  <thead>
+                  <td>序号</td>
+                  <td>注销日期</td>
+                  <td>注销原因</td>
+                  </thead>
+                  <tbody>
+                  <tr v-for="(item,index) in MORTGAGECANArr">
+                    <td>{{index+1}}</td>
+                    <td>{{item.MAB_CAN_DATE}}</td>
+                    <td>{{item.MAB_CAN_RES}}</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </el-dialog>
+            <!--./动产抵押详情弹窗-->
             <!--<span class="grey" v-if="MORDETAIL.length == 0">(暂无信息)</span>-->
             <div class="guquandongjieBox guquandongjieBoxzhixingren tableList" v-for="item in MORDETAIL">
               <p class="guquandongjieBoxH">登记证号：{{item.MORREGCNO}}</p>
@@ -312,6 +587,31 @@
                 <li>履约截止日期：<span>{{item.PEFPERTO}}</span></li>
               </ul>
             </div>
+            <p class="gongshangInofH3 weifa">企业严重违法<span class="count">{{breakLawCount}}</span></p>
+            <table class="tableList" width="100%"  cellspacing="0" border="1" v-if="breakLaw && breakLaw.length != 0">
+              <thead>
+                <td>列入原因</td>
+                <td>列入日期</td>
+                <td>列入作出决定机关</td>
+                <td>列入作出决定文号</td>
+                <td>移出原因</td>
+                <td>移出日期</td>
+                <td>移出作出决定机关</td>
+                <td>移出作出决定文号</td>
+              </thead>
+              <tbody>
+              <tr v-for="(item,index) in breakLaw">
+                <td>{{item.INREASON || "暂无数据"}}</td>
+                <td>{{item.INDATE || "暂无数据"}}</td>
+                <td>{{item.INREGORG || "暂无数据"}}</td>
+                <td>{{item.INSN || "暂无数据"}}</td>
+                <td>{{item.OUTREASON || "暂无数据"}}</td>
+                <td>{{item.OUTDATE || "暂无数据"}}</td>
+                <td>{{item.OUTREGORG || "暂无数据"}}</td>
+                <td>{{item.OUTSN || "暂无数据"}}</td>
+              </tr>
+              </tbody>
+            </table>
           </div>
         </div>
         <!--知识产权-->
@@ -329,12 +629,13 @@
              </div>
             <table class="tableList" width="100%"  cellspacing="0" border="1" v-if="TRADEMARK && TRADEMARK.length != 0">
               <thead>
-              <td>商标</td>
-              <td>商标名</td>
-              <td>商标最新状态</td>
-              <td>注册码</td>
-              <td>申请时间</td>
-              <td>商标类型</td>
+                <td>商标</td>
+                <td>商标名</td>
+                <td>商标最新状态</td>
+                <td>注册码</td>
+                <td>申请时间</td>
+                <td>商标类型</td>
+                <td>详情</td>
               </thead>
               <tbody>
               <tr v-for="item in TRADEMARK">
@@ -344,7 +645,7 @@
                 <td>{{item.MARKCODEKEY}}</td>
                 <td>{{item.APPDATE}}</td>
                 <td>{{item.MARKTYPE_NEW}}</td>
-                <!--<td @click="shangbiaoDetail">详情</td>-->
+                <td style="color:#4AA6FF;cursor: pointer;" @click="_tradeModelShow(item.MARKCODEKEY)">查看</td>
               </tr>
               </tbody>
             </table>
@@ -357,6 +658,61 @@
                 @go-page="_goTrademarkPage">
               </pager>
             </div>
+            <!--商标弹窗详情-->
+            <el-dialog title="商标详细信息" v-model="tradeVisible" :close-on-click-modal="false" class="trade mask">
+              <!--<div class="line"></div>-->
+              <div class="part1">
+                <table class="tableList"  width="100%" cellspacing="0" border="1">
+                 <tbody>
+                 <tr >
+                   <td>图片:</td>
+                   <td><img width="100" :src="'http://tm.bidata.com.cn/'+TRADEMARKDETAIL.IMGNAME" alt=""  :onerror="errorImg"/></td>
+                 </tr>
+                 <tr>
+                   <td>商标名称:</td>
+                   <td>{{TRADEMARKDETAIL.MARKNAME}}</td>
+                 </tr>
+                 <tr>
+                   <td>注册号:</td>
+                   <td>{{TRADEMARKDETAIL.MARKCODEKEY}}</td>
+                 </tr>
+                 <tr>
+                   <td>商标类型: </td>
+                   <td>{{TRADEMARKDETAIL.MARKTYPE_NEW}} </td>
+                 </tr>
+                 <tr >
+                   <td>商标状态: </td>
+                   <td>{{TRADEMARKDETAIL.STATUS}} </td>
+                 </tr>
+                 <tr>
+                   <td>申请日期:</td>
+                   <td>{{TRADEMARKDETAIL.APPDATE}}</td>
+                 </tr>
+                 <tr>
+                   <td>专用期（起始日期）:</td>
+                   <td>{{TRADEMARKDETAIL.BEGINDATE}}</td>
+                 </tr>
+                 <tr>
+                   <td>专用期（到期日期）:</td>
+                   <td>{{TRADEMARKDETAIL.ENDDATE}}</td>
+                 </tr>
+                 <tr>
+                   <td>商标/服务:</td>
+                   <td>{{TRADEMARKDETAIL.TYPEDETAILDES}}</td>
+                 </tr>
+                 <tr>
+                   <td>初审公告日期:</td>
+                   <td>{{TRADEMARKDETAIL.CHECKDATE}}</td>
+                 </tr>
+                 <tr>
+                   <td>注册公告日期:</td>
+                   <td>{{TRADEMARKDETAIL.REGDATE}}</td>
+                 </tr>
+                 </tbody>
+                </table>
+              </div>
+            </el-dialog>
+            <!--./商标弹窗详情-->
             <p class="gongshangInofH3 zhuzuoquanto">著作权<span class="count">{{zuopingCopycount}}</span></p>
             <table class="tableList" width="100%"  cellspacing="0" border="1" v-if="zuopingCopy.length != 0">
               <thead>
@@ -427,6 +783,48 @@
                 </ul>
               </div>
               <div class="websit">
+                <h2>企业认缴出资节点<span class="grey" v-if="this.renjiaoChuzis.length == 0">(暂无信息)</span></h2>
+                <table class="tableList" width="100%"  cellspacing="0" border="1" v-if="this.renjiaoChuzis.length != 0">
+                  <thead>
+                    <td>股东/发起人名称</td>
+                    <td>累计认缴额</td>
+                    <td>认缴出资日期</td>
+                    <td>出资方式</td>
+                    <td>币种</td>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(item,index) in renjiaoChuzis">
+                      <td>{{item.INV}}</td>
+                      <td>{{item.LISUBCONAM}}</td>
+                      <td>{{item.CONDATE}}</td>
+                      <td>{{item.CONFORM}}</td>
+                      <td>{{item.CURRENCY}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="websit">
+                <h2>企业实缴出资节点<span class="grey" v-if="this.shijiaoChuzis.length == 0">(暂无信息)</span></h2>
+                <table class="tableList" width="100%"  cellspacing="0" border="1" v-if="this.shijiaoChuzis.length != 0">
+                  <thead>
+                    <td>股东/发起人名称</td>
+                    <td>累计认缴额</td>
+                    <td>实缴出资日期</td>
+                    <td>出资方式</td>
+                    <td>币种</td>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(item,index) in shijiaoChuzis">
+                      <td>{{item.INV}}</td>
+                      <td>{{item.LIACCONAM}}</td>
+                      <td>{{item.CONDATE}}</td>
+                      <td>{{item.CONFORM}}</td>
+                      <td>{{item.CURRENCY}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="websit">
                 <h2>网站或网店信息<span class="grey" v-if="this.websitArr.length == 0">(暂无信息)</span></h2>
                 <table class="tableList" width="100%"  cellspacing="0" border="1" v-if="this.websitArr.length != 0">
                   <thead>
@@ -443,7 +841,70 @@
                   </tbody>
                 </table>
               </div>
-              <div class="share">
+              <div class="websit">
+                <h2>企业对外投资节点<span class="grey" v-if="this.YEARREPORTFORINVS.length == 0">(暂无信息)</span></h2>
+                <table class="tableList" width="100%"  cellspacing="0" border="1" v-if="this.YEARREPORTFORINVS.length != 0">
+                  <thead>
+                    <td>企业名称</td>
+                    <td>注册号</td>
+                    <td>统一社会信用代码</td>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(item,index) in YEARREPORTFORINVS">
+                      <td>{{item.ENTNAME}}</td>
+                      <td>{{item.REGNO}}</td>
+                      <td>{{item.CREDITNO}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="websit">
+                <h2>企业股权变更节点<span class="grey" v-if="this.YEARREPORTALTERSTOCKS.length == 0">(暂无信息)</span></h2>
+                <table class="tableList" width="100%"  cellspacing="0" border="1" v-if="this.YEARREPORTALTERSTOCKS.length != 0">
+                  <thead>
+                    <td>股东名称</td>
+                    <td>转让前股权比例</td>
+                    <td>转让后股权比例</td>
+                    <td>股权变更日期</td>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(item,index) in YEARREPORTALTERSTOCKS">
+                      <td>{{item.INV}}</td>
+                      <td>{{item.TRANSAMPR}}</td>
+                      <td>{{item.TRANSAMAFT}}</td>
+                      <td>{{item.ALTDATE}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+               <div class="websit">
+                <h2>企业对外提供保证担保信息<span class="grey" v-if="this.YEARREPORTFORGUARANTEES.length == 0">(暂无信息)</span></h2>
+                <table class="tableList" width="100%"  cellspacing="0" border="1" v-if="this.YEARREPORTFORGUARANTEES.length != 0">
+                  <thead>
+                    <td>债权人</td>
+                    <td>债务人</td>
+                    <td>主债权种类</td>
+                    <td>主债权数额</td>
+                    <td>履行债务的期限自</td>
+                    <td>履行债务的期限至</td>
+                    <td>保证的期间</td>
+                    <td>保证的方式</td>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(item,index) in YEARREPORTFORGUARANTEES">
+                      <td>{{item.MORE}}</td>
+                      <td>{{item.MORTGAGOR}}</td>
+                      <td>{{item.PRICLASECKIND}}</td>
+                      <td>{{item.PRICLASECAM}}</td>
+                      <td>{{item.PEFPERFORM}}</td>
+                      <td>{{item.PEFPERTO}}</td>
+                      <td>{{item.GUARANPERIOD}}</td>
+                      <td>{{item.GATYPE}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- <div class="share">
                 <h2>股东(发起人)及出资信息<span class="grey" v-if="capArr.length ==0">(暂无信息)</span></h2>
                 <table class="tableList" width="100%"  cellspacing="0" border="1" v-if="capArr.length !=0">
                   <thead>
@@ -463,7 +924,7 @@
                     </tr>
                   </tbody>
                 </table>
-              </div>
+              </div> -->
             </div>
 
           </div>
@@ -518,10 +979,20 @@ export default {
         ALTER:[],
         FILIATION:[],
         ENTINV:[],
+        entinvPagesize:2,
+        entinvCurpage:1,
+        entinvTotalPage:0, //对外投资总页数
         FRINV:[],
+        frinvCount:0,
+        frinvCurpage:1,
+        frinvTotalPage:0, //法定代表人对外投资总页数
         FRPOSITION:[],
+        frpositionCount:0,
+        frpositionCurpage:1,
+        frpositionTotalPage:0,//法定代表人其他公司任职总页数
         entinvcount:0,
         TRADEMARK:[],
+        TRADEMARKDETAIL:[],
         PUNISHED:[],
         PUNISHBREAK:[],
         SHARESIMPAWN:[],
@@ -533,6 +1004,16 @@ export default {
         basicArr:[],
         basicObj:{},
         websiteInfo:[],//网站信息
+        renjiaoChuzi:[], //企业认缴出资节点
+        shijiaoChuzi:[],//企业实缴出资节点
+        renjiaoChuzis:[], //企业认缴出资节点
+        shijiaoChuzis:[],//企业实缴出资节点
+        YEARREPORTFORINV:[],//企业对外投资节点
+        YEARREPORTFORINVS:[],//企业对外投资节点
+        YEARREPORTALTERSTOCK:[],//企业股权变更节点
+        YEARREPORTALTERSTOCKS:[],//企业股权变更节点
+        YEARREPORTFORGUARANTEE:[],//企业对外提供保证担保信息
+        YEARREPORTFORGUARANTEES:[],//企业对外提供保证担保信息
         websitArr:[],
         webObj:{},
         capitalInfo:[],//年报出资信息
@@ -573,6 +1054,36 @@ export default {
         breakCount:0,
         mortCount:0,
         trademarkCount:0,
+        breakLaw:[],//企业严重违法
+        breakLawCount:0,//企业严重违法数量
+        liquiDation:[],//清算信息
+        liquiDationCount:0,//清算信息数量
+        //新版模块
+        //股权出质
+        STOCKPAWN:[],  //股权出质信息-基本信息
+        STOCKPAWNALT:[],//股权出质信息-变更信息
+        STOCKPAWNALTArr:[],
+        STOCKPAWNREV:[],//股权出质信息-注销信息
+        STOCKPAWNREVArr:[],
+        stockVisible:false,//股权出质弹窗是否显示
+        stockIndex:'',
+        STOCKPAWNCount:0,//股权出质信息-基本信息数量
+        //动产抵押新模块
+        MORTGAGEREG:[],//动产抵押登记信息
+        MORTGAGEREGCount:0,//动产抵押登记信息数量
+        MORTGAGEREGArr:[],//动产抵押登记信息
+        MORTGAGEPER:[],//抵押人
+        MORTGAGEPERArr:[],//抵押人
+        MORTGAGEPAWN:[],//抵押物
+        MORTGAGEPAWNArr:[],//抵押物
+        MORTGAGEDEBT:[],//被担保主债权信息
+        MORTGAGEDEBTArr:[],//被担保主债权信息
+        MORTGAGECAN:[],//注销信息
+        MORTGAGECANArr:[],//注销信息
+        MORTGAGEALT:[],//变更信息
+        MORTGAGEALTArr:[],//变更信息
+        morgVisible:false,//动产抵押弹窗是否显示
+        tradeVisible:false,
     }
   },
    watch: {
@@ -611,6 +1122,82 @@ export default {
 
   },
   methods:{
+      //商标详情查看弹窗显示
+      _tradeModelShow(code){
+        this.tradeVisible = true;
+          this.axios.get(this.api.entBase+'/trademark/detail?markcodekey='+ code).then((res)=>{
+              console.log(res)
+              this.TRADEMARKDETAIL = res.data.TRADEMARKDETAIL;
+          }).catch(err => {
+              console.log(err);
+          })
+      },
+      //动产抵押查看详情弹窗显示
+      _morgModelShow(morgno){
+          this.morgVisible = true;
+          var morregArr = [];
+          for(var i in this.MORTGAGEREG){
+              if(morgno == this.MORTGAGEREG[i].MAB_REGNO){
+                  morregArr.push(this.MORTGAGEREG[i]);
+              }
+          }
+          this.MORTGAGEREGArr = morregArr;
+          var morperArr = [];
+          for(var m in this.MORTGAGEPER){
+              if(morgno == this.MORTGAGEPER[m].MAB_REGNO){
+                  morperArr.push(this.MORTGAGEPER[m]);
+              }
+          }
+          this.MORTGAGEPERArr = morperArr;
+          var morpawnArr = [];
+          for(var n in this.MORTGAGEPAWN){
+              if(morgno == this.MORTGAGEPAWN[n].MAB_REGNO){
+                  morpawnArr.push(this.MORTGAGEPAWN[n]);
+              }
+          }
+          this.MORTGAGEPAWNArr = morpawnArr;
+          var morebtArr = [];
+          for(var k in this.MORTGAGEDEBT){
+              if(morgno == this.MORTGAGEDEBT[k].MAB_REGNO){
+                  morebtArr.push(this.MORTGAGEDEBT[k]);
+              }
+          }
+          this.MORTGAGEDEBTArr = morebtArr;
+          var morcanArr = [];
+          for(var s in this.MORTGAGECAN){
+              if(morgno == this.MORTGAGECAN[s].MAB_REGNO){
+                  morcanArr.push(this.MORTGAGECAN[s]);
+              }
+          }
+          this.MORTGAGECANArr = morcanArr;
+          var moraltArr = [];
+          for(var t in this.MORTGAGEALT){
+              if(morgno == this.MORTGAGEALT[t].MAB_REGNO){
+                  moraltArr.push(this.MORTGAGEALT[t]);
+              }
+          }
+          this.MORTGAGEALTArr = moraltArr;
+      },
+      //股权出质查看详情弹窗显示
+      _stockModelShow(url){
+        this.stockVisible = true;
+        var pawnaltArr = [];
+        for(var j in this.STOCKPAWNALT){
+          if(url == this.STOCKPAWNALT[j].URL){
+              pawnaltArr.push(this.STOCKPAWNALT[j]);
+          }
+        }
+        console.log(pawnaltArr);
+        this.STOCKPAWNALTArr = pawnaltArr;
+        var pawnrevArr = [];
+        for(var o in this.STOCKPAWNREV){
+            if(url == this.STOCKPAWNREV[o].URL){
+                pawnrevArr.push(this.STOCKPAWNREV[o]);
+            }
+        }
+        console.log(pawnrevArr);
+        this.STOCKPAWNREVArr = pawnrevArr;
+      },
       // 关闭弹窗
       cancelMonitor: function(){
        this.surePutToMonitorBool = false;
@@ -695,12 +1282,17 @@ export default {
       _getYearReport(){
         // this.axios.get(this.api.entBase+'/detail?id='+ encodeURIComponent(this.listKeyword)+"&mask=1000000000000000000000000000001000000010000").then((res) => {
         this.axios.get(this.api.entBase+'/detail',{params: this.getCondition(this,"1000000000000000000000000000001000000010000")}).then((res)=>{
-          console.log(res);
+//          console.log(res);
           //年报
           this.reportBasic = res.data.ENT_INFO.YEARREPORTBASIC.reverse(); //年报基本信息
           this.websiteInfo = res.data.ENT_INFO.YEARREPORTWEBSITEINFO;//年报网站信息
           this.capitalInfo = res.data.ENT_INFO.YEARREPORTPAIDUPCAPITAL;//年报股东出资信息
           this.dealinInfo =  res.data.ENT_INFO.DEALIN;//企业资产状况信息
+          this.renjiaoChuzi =  res.data.ENT_INFO.YEARREPORTSUBCAPITAL;//企业认缴出资节点
+          this.shijiaoChuzi =  res.data.ENT_INFO.YEARREPORTPAIDUPCAPITAL;//企业实缴出资节点
+          this.YEARREPORTFORINV =  res.data.ENT_INFO.YEARREPORTFORINV;//企业对外投资节点
+          this.YEARREPORTALTERSTOCK =  res.data.ENT_INFO.YEARREPORTALTERSTOCK;//企业股权变更节点
+          this.YEARREPORTFORGUARANTEE =  res.data.ENT_INFO.YEARREPORTFORGUARANTEE;//企业对外提供保证担保信息
           this.$nextTick(function(){
             $(".report-item").eq(0).click();
             $(".report-item").eq(0).addClass('gongshangActive')
@@ -712,7 +1304,47 @@ export default {
       //年报年度报告切换
       reportClick(yearId){
         this.nowIndex = yearId;
-        console.log(this.nowIndex);
+        //企业对外提供保证担保信息
+        var YEARREPORTFORGUARANTEEarr = [];
+        for(var item in this.YEARREPORTFORGUARANTEE){
+          if(this.YEARREPORTFORGUARANTEE[item].ANCHEID == yearId){
+            YEARREPORTFORGUARANTEEarr.push(this.YEARREPORTFORGUARANTEE[item])
+          }
+        }
+        this.YEARREPORTFORGUARANTEES = YEARREPORTFORGUARANTEEarr;
+        //企业股权变更节点
+        var YEARREPORTALTERSTOCKarr = [];
+        for(var item in this.YEARREPORTALTERSTOCK){
+          if(this.YEARREPORTALTERSTOCK[item].ANCHEID == yearId){
+            YEARREPORTALTERSTOCKarr.push(this.YEARREPORTALTERSTOCK[item])
+          }
+        }
+        this.YEARREPORTALTERSTOCKS = YEARREPORTALTERSTOCKarr;
+        //企业对外投资节点
+        var YEARREPORTFORINVarr = [];
+        for(var item in this.YEARREPORTFORINV){
+          if(this.YEARREPORTFORINV[item].ANCHEID == yearId){
+            YEARREPORTFORINVarr.push(this.YEARREPORTFORINV[item])
+          }
+        }
+        this.YEARREPORTFORINVS = YEARREPORTFORINVarr;
+        //企业实缴出资节点
+        var shijiaoChuziArr = [];
+        for(var item in this.shijiaoChuzi){
+          if(this.shijiaoChuzi[item].ANCHEID == yearId){
+            shijiaoChuziArr.push(this.shijiaoChuzi[item])
+          }
+        }
+        console.log(this.shijiaoChuzi)
+        this.shijiaoChuzis = shijiaoChuziArr;
+        //企业认缴出资节点
+        var renjiaoChuziArr = [];
+        for(var item in this.renjiaoChuzi){
+          if(this.renjiaoChuzi[item].ANCHEID == yearId){
+            renjiaoChuziArr.push(this.renjiaoChuzi[item])
+          }
+        }
+        this.renjiaoChuzis = renjiaoChuziArr;
         //基本信息
         var bArr = [];
         for(var l in this.reportBasic){
@@ -724,8 +1356,6 @@ export default {
         if(bArr.length != 0){
           this.basicObj = bArr[0];
         }
-
-        //console.log(this.basicObj);
         //网站信息
         var webArr = [];
         for(var k in this.websiteInfo){
@@ -763,7 +1393,21 @@ export default {
         this.punishedCur = data.page;
         this.fengxianxinxiAjax();
       },
-
+      //对外投资分页
+      _goEntinvPage(data){
+        this.entinvCurpage = data.page;
+        this._getEntinv();
+      },
+      //法定代表人对外投资分页
+      _goFrinvPage(data){
+          this.frinvCurpage = data.page;
+          this._getFrinv();
+      },
+      //法定代表人其他公司任职分页
+      _goFrpositionPage(data){
+          this.frpositionCurpage = data.page;
+          this._getFrposition();
+      },
       getCondition(_this,mask){
         var condition = {
            mask: mask
@@ -780,8 +1424,7 @@ export default {
   	 //工商
       gongshangAjax(){
         //count接口
-
-        this.axios.get(this.api.entBase+'/statistic',{params:this.getCondition(this,"1111111111111111111111111111111111111111111")}).then((res)=>{
+        this.axios.get(this.api.entBase+'/statistic',{params:this.getCondition(this,"1111111111111111111111111111111111111111111111")}).then((res)=>{
             console.log(res);
             this.count = res.data.RESULT;
             this.personCount = res.data.RESULT.COUNTOFPERSON;
@@ -802,7 +1445,7 @@ export default {
         })
         //照面信息
         this.axios.get(this.api.entBase+'/detail',{params: this.getCondition(this,"1000000000000000000000000000000000000000000")}).then((res)=>{
-          console.log(res)
+          //console.log(res)
              if(res.data.CODE == 703){
                  window.swal({
                    title: "",
@@ -821,7 +1464,6 @@ export default {
               this.entName = res.data.ENT_INFO.BASIC.ENTNAME;
               this._getProCopyRight(this.entName);
               this._getSoftCopyRight(this.entName);
-              console.log(this.entName)
         }).catch((err)=>{
           console.log(err)
         })
@@ -838,8 +1480,7 @@ export default {
         // this.axios.get(this.api.entBase+'/detail?id='+ encodeURIComponent(this.listKeyword)+'&mask=1100000000010000000000000000000000000000000').then((res)=>{
         this.axios.get(this.api.entBase+'/detail',{params: this.getCondition(this,"1100000000010000000000000000000000000000000")}).then((res)=>{
               this.SHAREHOLDER = res.data.ENT_INFO.SHAREHOLDER;
-              console.log("this.SHAREHOLDER");
-              console.log(this.SHAREHOLDER);
+              //console.log(this.SHAREHOLDER);
         }).catch((err)=>{
           console.log(err)
         })
@@ -858,38 +1499,79 @@ export default {
           console.log(err)
         })
         //对外投资
-
-        this.axios.get(this.api.entBase+'/detail',{params: this.getCondition(this,"1000000001000000000000000000000000000000000")}).then((res)=>{
-              this.ENTINV = res.data.ENT_INFO.ENTINV
-        }).catch((err)=>{
-          console.log(err)
-        })
+        this. _getEntinv();
         //法定代表人对外投资
-
-        this.axios.get(this.api.entBase+'/detail',{params: this.getCondition(this,"1000000100000000000000000000000000000000000")}).then((res)=>{
-              this.FRINV = res.data.ENT_INFO.FRINV
-        }).catch((err)=>{
-          console.log(err)
-        })
+        this. _getFrinv();
         //法定代表人其他公司任职
+        this._getFrposition();
+        //清算信息调用
+          this._getLiquidation();
+      },
+      //对外投资
+      _getEntinv(){
+          this.axios.get(this.api.entBase+'/detail',{params: this.getCondition(this,"1000000001000000000000000000000000000000000")}).then((res)=>{
+              this.ENTINV = res.data.ENT_INFO.ENTINV;
+              this.entinvTotalPage = Math.ceil(res.data.ENT_INFO.ENTINV.length/this.entinvPagesize);   //总页数执行人
+              var k = 0;
+              k = this.entinvCurpage*this.entinvPagesize;
+              this.ENTINV = this.ENTINV.slice(k-this.entinvPagesize,k);
+          }).catch((err)=>{
+              console.log(err)
+          })
+      },
+      //法定代表人对外投资
+      _getFrinv(){
+          this.axios.get(this.api.entBase+'/detail',{params: this.getCondition(this,"1000000100000000000000000000000000000000000")}).then((res)=>{
+              this.FRINV = res.data.ENT_INFO.FRINV;
+              this.frinvCount = res.data.ENT_INFO.FRINV.length;
+              this.frinvTotalPage = Math.ceil(res.data.ENT_INFO.FRINV.length/this.entinvPagesize);
+              var m = 0;
+              m = this.frinvCurpage*this.entinvPagesize;
+              this.FRINV = this.FRINV.slice(m-this.entinvPagesize,m);
 
-        this.axios.get(this.api.entBase+'/detail',{params: this.getCondition(this,"1000000010000000000000000000000000000000000")}).then((res)=>{
-              console.log(res.data.ENT_INFO.FRPOSITION)
-              this.FRPOSITION = res.data.ENT_INFO.FRPOSITION
-        }).catch((err)=>{
-          console.log(err)
-        })
+          }).catch((err)=>{
+              console.log(err)
+          })
+      },
+      //法定代表人其他公司任职
+      _getFrposition(){
+          this.axios.get(this.api.entBase+'/detail',{params: this.getCondition(this,"1000000010000000000000000000000000000000000")}).then((res)=>{
+              //console.log(res.data.ENT_INFO.FRPOSITION)
+              this.FRPOSITION = res.data.ENT_INFO.FRPOSITION;
+              this.frpositionCount = res.data.ENT_INFO.FRPOSITION.length;
+              this.frpositionTotalPage = Math.ceil(res.data.ENT_INFO.FRPOSITION.length/this.entinvPagesize);
+              var m = 0;
+              m = this.frpositionCurpage*this.entinvPagesize;
+              this.FRPOSITION = this.FRPOSITION.slice(m-this.entinvPagesize,m);
+
+          }).catch((err)=>{
+              console.log(err)
+          })
       },
      //风险
      fengxianxinxiAjax(){
           //股权出质
           // {params: this.getCondition(this,"1000000000000001000000000000000000000000000")}
         // this.axios.get(this.api.entBase+'/detail?id='+ encodeURIComponent(this.listKeyword)+ '&mask=1000000000000000000000010000000000000000000').then((res)=>{
-        this.axios.get(this.api.entBase+'/detail',{params: this.getCondition(this,"1000000000000000000000010000000000000000000")}).then((res)=>{
-              this.SHARESIMPAWN = res.data.ENT_INFO.SHARESIMPAWN;
-        }).catch((err)=>{
-          console.log(err)
-        })
+//        this.axios.get(this.api.entBase+'/detail',{params: this.getCondition(this,"1000000000000000000000010000000000000000000")}).then((res)=>{
+//            //console.log(res);
+//              this.SHARESIMPAWN = res.data.ENT_INFO.SHARESIMPAWN;
+//        }).catch((err)=>{
+//          console.log(err)
+//        })
+         //股权出质--最新模块
+         this.axios.get(this.api.entBase+'/detail',{params: this.getCondition(this,"1000000000000000000000000000000000000000000001")}).then((res)=>{
+             //console.log(res);
+//                 STOCKPAWN:[],  //股权出质信息-基本信息
+//                 STOCKPAWNALT:[],//股权出质信息-变更信息
+//                 STOCKPAWNREV:[],//股权出质信息-注销信息
+             this.STOCKPAWN = res.data.ENT_INFO.STOCKPAWN;
+             this.STOCKPAWNCount = res.data.ENT_INFO.STOCKPAWN.length;
+             this.STOCKPAWNALT = res.data.ENT_INFO.STOCKPAWNALT;
+             this.STOCKPAWNREV = res.data.ENT_INFO.STOCKPAWNREV;
+         }).catch((err)=>{
+             console.log(err)
+         })
       //股权冻结
         // this.axios.get(this.api.entBase+'/detail?'+ encodeURIComponent(this.listKeyword)+ '&mask=1000000000000000000000000000010000000000000').then((res)=>{
         this.axios.get(this.api.entBase+'/detail',{params: this.getCondition(this,"1000000000000000000000000000010000000000000")}).then((res)=>{
@@ -908,21 +1590,14 @@ export default {
         // this.axios.get(this.api.entBase+'/detail?id='+ encodeURIComponent(this.listKeyword)+'&mask=1000000000000000000000000000000010000000000').then((res)=>{
         this.axios.get(this.api.entBase+'/detail',{params: this.getCondition(this,"1000000000000000000000000000000010000000000")}).then((res)=>{
               this.CASEINFO = res.data.ENT_INFO.CASEINFO;
-              console.log(this.CASEINFO);
+              //console.log(this.CASEINFO);
         }).catch((err)=>{
           console.log(err)
         })
         //被执行人
         // this.axios.get(this.api.entBase+'/detail?id='+ encodeURIComponent(this.listKeyword)+ '&mask=1101000111011000000000000010000001000000000').then((res)=>{
         this.axios.get(this.api.entBase+'/detail',{params: this.getCondition(this,"1101000111011000000000000010000001000000000")}).then((res)=>{
-          // var aa=res.data.ENT_INFO.PUNISHED;
-          // var arr = [];
-          // for(var index in aa){
-          //     arr.push(aa[index].CASECODE)
-          // }
-          //  document.write(res.data.ENT_INFO.PUNISHED)
-              console.log(res);
-
+              //console.log(res);
               this.PUNISHED = res.data.ENT_INFO.PUNISHED;
               if(res.data.ENT_INFO.PUNISHED.length > 10000){
                 res.data.ENT_INFO.PUNISHED.length = 10000;
@@ -943,11 +1618,33 @@ export default {
         })
         //动产抵押
         // this.axios.get(this.api.entBase+'/detail?id='+ encodeURIComponent(this.listKeyword)+  '&mask=1000000000000000000000001000000000000000000').then((res)=>{
-        this.axios.get(this.api.entBase+'/detail',{params: this.getCondition(this,"1000000000000000000000001000000000000000000")}).then((res)=>{
-              this.MORDETAIL = res.data.ENT_INFO.MORDETAIL;
-        }).catch((err)=>{
-          console.log(err)
-        })
+//        this.axios.get(this.api.entBase+'/detail',{params: this.getCondition(this,"1000000000000000000000001000000000000000000")}).then((res)=>{
+//              console.log(res);
+//             this.MORDETAIL = res.data.ENT_INFO.MORDETAIL;
+//        }).catch((err)=>{
+//          console.log(err)
+//        })
+         //动产抵押--最新模块
+         this.axios.get(this.api.entBase+'/detail',{params: this.getCondition(this,"100000000000000000000000000000000000000000010")}).then((res)=>{
+             console.log(res);
+//             MORTGAGEREG:[],//动产抵押登记信息
+//             MORTGAGEPER:[],//抵押人
+//             MORTGAGEPAWN:[],//抵押物
+//             MORTGAGEDEBT:[],//被担保主债权信息
+//             MORTGAGECAN:[],//注销信息
+//             MORTGAGEALT:[],//变更信息
+             this.MORTGAGEREG = res.data.ENT_INFO.MORTGAGEREG;
+             this.MORTGAGEREGCount = res.data.ENT_INFO.MORTGAGEREG.length;
+             this.MORTGAGEPER = res.data.ENT_INFO.MORTGAGEPER;
+             this.MORTGAGEPAWN = res.data.ENT_INFO.MORTGAGEPAWN;
+             this.MORTGAGEDEBT = res.data.ENT_INFO.MORTGAGEDEBT;
+             this.MORTGAGECAN = res.data.ENT_INFO.MORTGAGECAN;
+             this.MORTGAGEALT = res.data.ENT_INFO.MORTGAGEALT;
+         }).catch((err)=>{
+             console.log(err)
+         })
+         //企业严重违法调用
+         this._getBreaklaw();
      },
        //知识产权点击事件整合
       _knowledgeClick(){
@@ -961,11 +1658,10 @@ export default {
       },
       //商标接口
       _getTradeMarkInfo(){
-
-          console.log(this.entName)
         // this.axios.get(this.api.entBase+'/detail?id='+ encodeURIComponent(this.listKeyword)+"&mask=1000000000000000000000000000000000000000010").then((res) => {
         this.axios.get(this.api.entBase+'/trademark/list?key='+ encodeURIComponent(this.entName)+"&page="+this.curPage+"&size="+this.pagesize).then((res)=>{
-          console.log(res.data.TRADEMARKLIST);
+          //console.log(res.data.TRADEMARKLIST);
+            console.log(res);
           this.TRADEMARK = res.data.TRADEMARKLIST;
           // //商标分页start
            var trademarkLen = res.data.TRADEMARKLIST.length;
@@ -984,7 +1680,7 @@ export default {
       _getProCopyRight(entname){
         this.axios.get(this.api.entBase+'/copyright?key='+ encodeURIComponent(entname)+"&mask=001"+"&page="+this.proCurPage+"&size="+this.pagesize).then((res)=>{
         // this.axios.get(this.api.entBase+'/detail',{params: this.getCondition(this,"001")}).then((res)=>{
-          console.log(res);
+          //console.log(res);
           this.zuopingCopy = res.data.result.PRODUCTCOPYRIGHT;
           this.zuopingCopycount = res.data.result.COUNTOFPRODUCTCOPYRIGHT;
           if(res.data.result.COUNTOFPRODUCTCOPYRIGHT >10000){
@@ -1010,7 +1706,6 @@ export default {
       },
       //软件著作权
       _getSoftCopyRight(entname){
-
         this.axios.get(this.api.entBase+'/copyright?key='+ encodeURIComponent(entname)+"&mask=010"+"&page="+this.softCurPage+"&size="+this.pagesize).then((res) => {
         // this.axios.get(this.api.entBase+"/detail?page="+this.softCurPage+"&size="+this.pagesize,{params: this.getCondition(this,"&mask=010")}).then((res)=>{
           this.runjianCopy = res.data.result.COPYRIGHTINFO;
@@ -1034,9 +1729,32 @@ export default {
         }).catch(err => {
             console.log(err);
         })
-
+      },
+      //清算信息
+      _getLiquidation(){
+          this.axios.get(this.api.entBase+'/detail',{params: this.getCondition(this,"100000000000000000000000000000010000000000000")}).then((res)=>{
+              //console.log(res);
+              this.liquiDation = res.data.ENT_INFO.LIQUIDATION;
+              this.liquiDationCount = res.data.ENT_INFO.LIQUIDATION.length;
+          }).catch((err)=>{
+              console.log(err)
+          })
+      },
+      //企业严重违法
+      _getBreaklaw(){
+          //100000000000000000000000000000000000000000001
+          this.axios.get(this.api.entBase+'/detail',{params: this.getCondition(this,"100000000000000000000000000000000000000000001")}).then((res)=>{
+              //console.log(res);
+              this.breakLaw = res.data.ENT_INFO.BREAKLAW;
+              this.breakCount = res.data.ENT_INFO.BREAKLAW.length;
+          }).catch((err)=>{
+              console.log(err)
+          })
       },
      //上线定位 dongchandiyato
+      weifa(){
+          this.allTo($('.weifa'));
+      },
       dongchandiyaTo(){
         this.allTo($('.dongchandiyato'));
       },
@@ -1075,6 +1793,9 @@ export default {
       },
       farenduiwaiTo(){
         this.allTo($('.farenduiwaito'));
+      },
+      qingsuanTo(){
+          this.allTo($('.qingsuanto'));
       },
       farenGduiwaiTo(){
         this.allTo($('.farenGduiwaito'));
@@ -1135,7 +1856,6 @@ export default {
         var that = this;
         clearTimeout(this.timer);// 关闭400ms内的上一个计时器，400ms后认为用户停止输入，即输入完成，开始搜索，从而减少多余的请求次数
         this.timer = setTimeout(function () {
-          console.log(1);
           that._getSerLists();// 发送搜索请求
         }, 400);
       },
@@ -1155,6 +1875,14 @@ export default {
           window.sessionStorage.removeItem('hcname');
           sessionStorage.setItem('hcname',keyword);
       },
+      //主要高管点击人名跳转到高管探查
+      _goPerson(keyword,keyname){
+          this.$router.push({ name: '高管探查'});
+          window.sessionStorage.removeItem('query');
+          window.sessionStorage.removeItem('queryName');
+          sessionStorage.setItem('query',keyword);
+          sessionStorage.setItem('queryName',keyname);
+      },
       //列表切换
       tabList(){
 
@@ -1163,11 +1891,8 @@ export default {
           var pathHref= locataionH.substring(n);
           //传到index页面
           sessionStorage.setItem('qiteDetailPathHref',pathHref);
-
-          console.log(pathHref)
-
+          //console.log(pathHref)
           var top = $('.contabList').offset().top
-
           // window.onscroll=function(){
           //   console.log(top)
           //   if((document.documentElement.scrollTop || document.body.scrollTop) > 200){
@@ -1185,7 +1910,6 @@ export default {
           // }
           $('.shangbiaoTabXiala').click(function(){
               var index=$(this).index()
-            console.log(index)
             if($('.shangbiaoTabXialaBoxBottom').eq(index-1).is(":hidden")){
               $('.shangbiaoTabXialaBoxBottom').hide();
               $('.shangbiaoTabXialaBoxBottom').eq(index-1).show();
@@ -1195,14 +1919,12 @@ export default {
             }
           });
         $('.gongshangList ul li').hover(function(){
-            console.log('hover')
           $('.gongshangList ul li').removeClass('gongshanghover')
           $(this).addClass('gongshanghover')
         },function(){
           $('.gongshangList ul li').removeClass('gongshanghover')
         });
         $('.gongshangList ul li').click(function(){
-          console.log('click')
           $('.gongshangList ul li').removeClass('gongshangActive')
           $(this).addClass('gongshangActive')
         });
@@ -1632,17 +2354,18 @@ export default {
   .tableList thead td{
     background: #F3F7FA;
     height: 44px;
-    line-height: 44px;
-    padding-left: 15px;
+    line-height: 30px;
+    padding: 0 5px;
     border:1px solid #E6E6E6;
     color: #5E7386;
     font-weight: bold;
+    text-align: center;
   }
   .tableList tbody td{
     line-height: 30px;
-    padding-left: 15px;
     border:1px solid #E6E6E6;
-    padding: 5px 8px 5px 15px;
+    padding: 5px 8px 5px 8px;
+    text-align: center;
   }
   .gongshangInofjingying{
     line-height: 30px;
@@ -1854,7 +2577,7 @@ word-wrap: break-word;
 .ser-btn .icon-ser{
   position: absolute;
   left:12px;
-  top:9px;
+  top:11px;
   width:16px;
   height: 16px;
   background: url(../../assets/search_icon.png) no-repeat;
@@ -1897,5 +2620,40 @@ input::-ms-clear{display:none;}
 .search-results > li:hover{
   background: #f2f6f9;
   color: #323232;
+}
+.mask .line{
+  width:100%;
+  height:1px;
+  background-color: #e6e6e6;
+  position:relative;
+  top:-15px
+}
+.mask .mb20{
+  margin-bottom:20px;
+}
+.mask .title{
+  font-size:16px;
+  position: relative;
+  /*border-left: 5px solid #4AA6FF;*/
+  padding-left:10px;
+}
+.mask .title::before{
+  position: absolute;
+  left:0;
+  top:5px;
+  content:"";
+  width:7px;
+  height:7px;
+  background-color: #3BD2A2;
+  border-radius:50%;
+}
+.mask .tip{
+  height:40px;
+  width:100%;
+  background-color: #F3F7FA;
+  text-align: center;
+  line-height:40px;
+  margin-top:20px;
+  color: #999;
 }
 </style>

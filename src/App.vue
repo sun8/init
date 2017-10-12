@@ -82,6 +82,9 @@ export default {
     line-height:1;
     font-size:14px;
     color: #323232;
+    overflow:auto !important;
+    padding-right:0 !important;
+    position: relative;
   }
   a {
     text-decoration: none;
@@ -110,6 +113,24 @@ export default {
   /*清除浮动*/
   .clearfix:after{content:'.';display:block;width:0;visibility:hidden;height:0;clear:both;}
   .clearfix{*zoom:1;}
-
-
+  .page-header.navbar.navbar-fixed-top{
+    z-index:1000 !important;
+  }
+  .mask{
+    padding-right: 17px !important;
+    width: 100%;
+    box-sizing: content-box;
+  }
+  .stockpawn .el-dialog--small{
+    width:800px !important;
+  }
+  .morg .el-dialog--small{
+    width:900px !important;
+  }
+  .trade .el-dialog--small{
+    width:900px !important;
+  }
+  .trade .tableList tbody tr td:first-child{
+    width:150px;
+  }
 </style>

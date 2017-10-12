@@ -5,7 +5,7 @@
     <div class="search clearfix">
       <div class="ser">
         <div class="search-box">
-          <input type="text" placeholder='请输入企业名称，如"小米科技"' ref="inputValue" v-model="query" @focus="_timeflash" v-on:input="_timeflash" @keyup.enter="_getLists"  @keydown="_timeflash" @blur="_closeSearch">
+          <input type="text" placeholder='请输入企业名称、注册号或统一社会信用代码,如"小米科技"' ref="inputValue" v-model="query" @focus="_timeflash" v-on:input="_timeflash" @keyup.enter="_getLists"  @keydown="_timeflash" @blur="_closeSearch">
         </div>
         <div class="ser-btn" @click="_getLists"><i class="icon-ser"></i></div>
       </div>
@@ -55,7 +55,7 @@
         <div class="filter-item clearfix" ref="filterItemStatus" v-if="statusSeen">
           <div class="filter-item-tit fl">经营状态:</div>
           <div class="filter-item-cont fl">
-            <span class="filter-item-base" v-for="(item,index) in status" @click="_statusClick(index)">{{item.STATUSNAME}}<em>({{item.COUNT}})</em></span>
+            <span class="filter-item-base" v-for="(item,index) in status" @click="_statusClick(index)" v-if="item.STATUSNAME != ''">{{item.STATUSNAME}}<em>({{item.COUNT}})</em></span>
           </div>
         </div>
       </div>
@@ -74,7 +74,7 @@
           <li class="col-lg-6 col-md-6 col-sm-6 col-xs-12" v-for="(item,index) in companyList" @click="_goDetail(item.ID,item.ENTNAME,item.NAME)">
             <div class="li-inner">
               <h3 class="name">{{item.ENTNAME || '--'}}</h3>
-              <p><span>统一信用代码：</span><span>{{item.CREDITCODE || '未公开'}}</span></p>
+              <p><span>统一社会信用代码：</span><span>{{item.CREDITCODE || '未公开'}}</span></p>
               <p><span>法定代表人：</span><span>{{item.NAME || '暂无'}}</span></p>
               <p><span>注册资本：</span><span v-if="item.REGCAP">{{item.REGCAP}}万元</span><span v-else>未公开</span></p>
               <p><span>注册时间：</span><span>{{item.ESDATE || '暂无'}}</span></p>
@@ -249,7 +249,7 @@ export default {
         return false;
       }
       this.axios.get(this.api.entBase+'/list?key='+encodeURIComponent(name)).then((res) => {
-        console.log(res);
+//        console.log(res);
         if(res.data.ENTERPRISES != []){
           this.serList = [];
           if(res.data.ENTERPRISES.length > 6){
@@ -270,12 +270,9 @@ export default {
       //value存储
       var entnamee =this.query
       sessionStorage.setItem('hcname',entnamee);
-
-      console.log("111111");
       var that = this;
       clearTimeout(this.timer);
       this.timer = setTimeout(function () {
-        console.log(222222222)
         that._getSerLists();// 发送搜索请求
       }, 500);
     },
@@ -304,7 +301,7 @@ export default {
         this.axios.get(this.api.entBase+'/list?key='+encodeURIComponent(this.query)+"&industry="+encodeURIComponent(this.industryVal)+"&area="+encodeURIComponent(this.areaVal)+"&status="+encodeURIComponent(this.statusVal)).then((res) => {
 
         this.loading = false;
-        console.log(res);
+        //console.log(res);
         if(res.data.CODE == 200){
           if(res.data.ENTERPRISES.length === 0){
 //            this.loading = false;
@@ -341,8 +338,6 @@ export default {
 
     //跳转详情页
     _goDetail(entid,entname,name){
-      console.log(entid+entname+1)
-      console.log(name);
       // 记录点击详情内容
       this.axios.put(this.api.common_history,{
         "productCode": "enterprise-datasource",
@@ -360,14 +355,10 @@ export default {
     },
     //国民行业点击事件
     _industryClick(index){
-        //console.log(this.industry[index].INDUSTRY);
-        // this.$refs.filterItem.style.display="none";
         this.industrySeen = false;
         this.industryVal = this.industry[index].INDUSTRYPHY;
-        console.log(this.industryVal);
         this.industryName = this.industry[index].INDUSTRYPHYNAME;
         this.selectedArr.push(this.industryName);
-        console.log(this.selectedArr);
         if(this.selectedArr.length == 3){
           this.seen = false;
         }else{
@@ -382,10 +373,8 @@ export default {
         //this.$refs.filterItemArea.style.display="none";
         this.areaSeen = false;
         this.areaVal = this.area[index].AREACODE;
-        console.log(this.areaVal);
         this.areaName = this.area[index].AREANAME
         this.selectedArr.push(this.areaName);
-        console.log(this.selectedArr);
         if(this.selectedArr.length == 3){
           this.seen = false;
         }else{
@@ -401,7 +390,6 @@ export default {
         this.statusVal = this.status[index].STATUS;
         this.statusName = this.status[index].STATUSNAME;
         this.selectedArr.push(this.statusName);
-        console.log(this.selectedArr);
         if(this.selectedArr.length == 3){
           this.seen = false;
         }else{
@@ -412,7 +400,6 @@ export default {
     },
     _tabClick(e,index){
         var currentDom = e.currentTarget;
-        console.log(currentDom);
         $(currentDom).remove();
         this.seen = true;
         if(this.selectedArr[index] == this.industryName){
@@ -433,7 +420,6 @@ export default {
             //this.$refs.filterItemStatus.style.display="block";
             this.statusSeen = true;
         }
-        console.log(this.selectedArr);
         this._getLists();
     }
 
@@ -496,7 +482,7 @@ export default {
   .ser-btn .icon-ser{
     position: absolute;
     left:12px;
-    top:9px;
+    top:11px;
     width:16px;
     height: 16px;
     background: url(../../assets/search_icon.png) no-repeat;

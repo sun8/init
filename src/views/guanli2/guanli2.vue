@@ -183,18 +183,8 @@ import {
   //布局
   import {GridLayout,GridItem} from 'vue-grid-layout';
 
-  import ECharts from 'vue-echarts/components/ECharts.vue'
-  import chart from 'Vue-ECharts';
-  // import chart from 'vue-echarts/components/ECharts.vue';
+  import ECharts from 'vue-echarts/components/ECharts.vue';
 //绘制图表
-  // import 'echarts/lib/chart/bar'
-  // import 'echarts/lib/chart/pie'
-  // import 'echarts/lib/chart/line'
-  // import 'echarts/lib/chart/radar'
-  // import 'echarts/lib/chart/map'
-  // import 'echarts/lib/component/legend'
-  // import 'echarts/lib/component/visualMap'
-  // import 'echarts/lib/component/polar'
   import 'echarts/lib/chart/bar'
   import 'echarts/lib/chart/line'
   import 'echarts/lib/chart/pie'
@@ -206,13 +196,12 @@ import {
   import 'echarts/lib/component/polar'
   import 'echarts/lib/component/geo'
   import 'echarts/lib/component/legend'
-  import 'echarts/lib/component/title'
+  // import 'echarts/lib/component/title'
   import 'echarts/lib/component/visualMap'
   // built-in theme
   import 'echarts/theme/dark'
   // Map of China
   import chinaMap from '../../common/data/china.json'
-  import theme from '../../common/data/theme.json'
 
   // registering map data
   ECharts.registerMap('china', chinaMap)
@@ -220,7 +209,6 @@ import {
     components:{
       GridLayout,
       GridItem,
-	    chart,
       ECharts
     },
     data () {
@@ -385,7 +373,9 @@ import {
         getEnterpriseQquantity(({code,result})=>{
           if(code!==200) return;
           this.chartOptions[0] = buildEnterpriseQquantityOption(result);
-          this.loading[0] = false;
+          let newLoading = this.loading.slice();
+          newLoading[0] = false;
+          this.loading = newLoading;
         })
       },
 
@@ -394,7 +384,9 @@ import {
     		getLatestChangeStat( ({success, statResult})=>{
     			if(!success) return;
     			this.chartOptions[1] = buildLatestChangeOption(statResult);
-          this.loading[1] = false;
+          let newLoading = this.loading.slice();
+          newLoading[1] = false;
+          this.loading = newLoading;
     		} );
     	},
 
@@ -403,7 +395,9 @@ import {
         getEnterpriseCapitalRegistration(({code,result})=>{
           if(code!==200) return;
           this.chartOptions[2] = buildEnterpriseCapitalRegistrationOption(result.pie);
-          this.loading[2] = false;
+          let newLoading = this.loading.slice();
+          newLoading[2] = false;
+          this.loading = newLoading;
         })
       },
 
@@ -412,7 +406,9 @@ import {
         getEnterpriseRegistrationTime(({code,result})=>{
           if(code!==200) return;
           this.chartOptions[3] = buildEnterpriseRegistrationTimeOption(result);
-          this.loading[3] = false;
+          let newLoading = this.loading.slice();
+          newLoading[3] = false;
+          this.loading = newLoading;
         })
       },
 
@@ -421,7 +417,9 @@ import {
     		getRadarMap( ( {data, success} )=>{
     			if(!success) return;
     			this.chartOptions[4] =  buildChangeRadar(data);
-          this.loading[4] = false;
+          let newLoading = this.loading.slice();
+          newLoading[4] = false;
+          this.loading = newLoading;
     		} );
     	},
 
@@ -430,7 +428,9 @@ import {
     		getMonitorDensity( ({success, statResult,proviceCount})=>{
     				if(!success) return;
             this.chartOptions[5] = this.mapData.monitor = buildMonitorDensityOption(statResult);
-            this.loading[5] = false;
+            let newLoading = this.loading.slice();
+            newLoading[5] = false;
+            this.loading = newLoading;
     		} );
     	},
 
@@ -439,7 +439,7 @@ import {
     		getChangeDensity( ({success, statResult,proviceCount})=>{
     				if(!success) return;
             this.mapData.change = buildChangeDensityOption(statResult);
-            this.loading[5] = false;
+            // this.loading[5] = false;
     		} );
     	},
 
@@ -448,7 +448,7 @@ import {
     		getRiskDensity( ({success, statResult,proviceCount})=>{
     				if(!success) return;
             this.mapData.risk = buildRiskDensityOption(statResult);
-            this.loading[5] = false;
+            // this.loading[5] = false;
     		} );
     	}
 

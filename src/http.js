@@ -26,7 +26,18 @@ axios.interceptors.request.use(
 axios.interceptors.response.use((res) => {
   var code = res.data.code || res.data.CODE;
   if (code !== 200&&code !== 401&&code !== 403) {
-    console.log('数据返回有误');
+    window.swal({
+                  title: "确认",
+                  text: '返回数据有误，请重新登录',
+                  type: "info",
+                  showCancelButton: false,
+                  confirmButtonColor: "#DD6B55",
+                  confirmButtonText: "确认",
+                  cancelButtonText: "取消",
+                  closeOnConfirm: false,
+                  closeOnCancel: true
+                });
+    router.push('/login')
     return Promise.reject(res);
   }else if(code === 401){
     alert("登录时间过长，请重新登录")
