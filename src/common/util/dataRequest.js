@@ -3,14 +3,13 @@
 import axios from 'axios';
 
 import shouldRequest from './dataCache.js';
-const req = axios.create({
+const req = ()=> axios.create({
 	baseURL: 'http://fl.bidata.com.cn:8088/',
 	timeout: 10000,
 	headers: {
 		'X-Token': localStorage.getItem('tokenF')
 	}
 });
-
 const reqByCross = axios.create({
 	baseURL: 'https://api.bidata.com.cn/dashboard',
 	timeout: 10000,
@@ -21,9 +20,9 @@ const reqByCross = axios.create({
 
 function request(url, cb, keyName) {
 	if( shouldRequest(keyName) ){
-		req.get( url )
+		req().get( url )
 			.then(rut=>{
-				// console.log(rut);
+				console.log(rut);
 				if(!rut.data.success) return;
 				localStorage.setItem(keyName, JSON.stringify(rut.data));
 				cb && cb(rut.data);
@@ -33,8 +32,7 @@ function request(url, cb, keyName) {
 				console.log(err);
 			})
 	}else{
-		setTimeout(f=>{ cb( JSON.parse(localStorage.getItem(keyName))) })
-		// return cb && cb( JSON.parse(localStorage.getItem(keyName)) );
+		setTimeout(f=>{ cb( JSON.parse(localStorage.getItem(keyName))) },100)
 	}
 }
 
@@ -54,8 +52,7 @@ function requestPost(url, cb,  keyName, data={}, config={}) {
 			})
 
 	}else{
-		setTimeout(f=>{cb( JSON.parse(localStorage.getItem(keyName)))})
-		// return cb && cb( JSON.parse(localStorage.getItem(keyName)) , 'post');
+		setTimeout(f=>{cb( JSON.parse(localStorage.getItem(keyName)))},100)
 	}
 }
 

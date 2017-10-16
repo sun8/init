@@ -131,7 +131,7 @@ export default {
             localStorage.setItem('tokenF',res.data.token.uid);
 
             this.$router.push({path:"/guanli2"});
-            window.location.reload()
+            // window.location.reload()
             $('.zloading').hide();
         }).catch(err => {
              console.log(err)

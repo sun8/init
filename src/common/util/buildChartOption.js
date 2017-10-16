@@ -529,7 +529,6 @@ const createDensityOption = (seectionName,data, ratio) => {
 
 
 	let datas = [];
-console.log(data,'请求数据');
 
 	let areaMap = {
 		"110000": "北京",
@@ -586,13 +585,12 @@ console.log(data,'请求数据');
 
 
 	datas = _wrapper(data);
-console.log(datas,'处理后的数据');
 	return renderDensityOption(seectionName, datas, ratio);
 
 }
 
 const renderDensityOption = (seectionName,datas,max) => {
-	console.log(max);
+
 	var option = {
 	    title: {
 	        text: '',
@@ -606,7 +604,7 @@ const renderDensityOption = (seectionName,datas,max) => {
     				if(params.value) {
     						return params.name + ": " + params.value;
     				}
-    				return params.name + ": 无数据";
+    				return params.name + ": 无";
     		}
 	    },
 	    legend: {
@@ -659,7 +657,6 @@ const renderDensityOption = (seectionName,datas,max) => {
 			}
 		]
 	};
-	console.log(option,'构建好的视图option');
 
 	return option;
 }

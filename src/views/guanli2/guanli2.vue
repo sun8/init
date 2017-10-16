@@ -81,7 +81,7 @@
                   <i class="el-icon-loading loadingStyle" v-if="loading[index]"></i>
 
                     <ECharts
-                       :options="chartOptions[index]"
+                       :options="chartOptions[item.refs]"
                        auto-resize
                        :ref="item.refs"
                        class="vue-echart"
@@ -130,7 +130,7 @@
    					  <div class="echarts-vue">
                 <i class="el-icon-loading loadingStyle" v-if="loading[5]"></i>
 						    <ECharts
-  						    :options="chartOptions[5]"
+  						    :options="chartOptions.map"
   						    auto-resize
   						    :ref="layout[5].refs"
 						      v-else
@@ -146,6 +146,7 @@
 
 </template>
 <script>
+
   // 引入请求函数
 import {
 	getLatestChangeStat,
@@ -238,17 +239,18 @@ import {
           entYear:0
         },
         loading:[true,true,true,true,true,true],
-        chartOptions: [{}, {}, {}, {}, {},{}],
+        chartOptions:{
+          bar:null,
+          polar:null,
+          pie:null,
+          line:null,
+          radar:null,
+          map:null
+        },
         chartOptionsTitle:['按行业分类企业数量TOP10','整体概览','企业注册资本','按企业注册时间查询总量','指标概要','变更趋势'],
 
         activeName2: 'first',
-        mapData:{
-          monitor:{},
-          change:{},
-          risk:{}
-        },
         timer:null
-        // autoResize:true
       }
 
     },
@@ -259,12 +261,13 @@ import {
     created(){
     },
     mounted(){
+      // console.log(window.location.hash.split('/')[2]);
       this.getLatestChangeStat();
   		this.getRadarMap();
 
   		this.getMonitorDensity();
-      this.getChangeDensity();
-      this.getRiskDensity();
+       // this.getChangeDensity();
+     // this.getRiskDensity();
 
   		this.getEnterpriseCapitalRegistration();
   		this.getEnterpriseQquantity();
@@ -276,7 +279,7 @@ import {
     //数据更新完的回掉函数，执行定时器
     updated(){
       //饼图定时器
-      if(!this.chartOptions.length)return
+      if(!this.chartOptions.pie)return
       let dataIndex = -1;
       let pie = this.$refs.pie;
       if(!pie)return;
@@ -341,16 +344,16 @@ import {
       handleClick(tab) {
         switch (tab.label) {
           case "监控密度":
-            this.chartOptions[5] = this.mapData.monitor;
+          this.getMonitorDensity();
           break;
           case "变更密度":
-            this.chartOptions[5] = this.mapData.change;
+          this.getChangeDensity();
           break;
           case "风险密度":
-            this.chartOptions[5] = this.mapData.risk;
+          this.getRiskDensity();
           break;
           default:
-            this.chartOptions[5] = this.mapData.monitor;
+            this.getMonitorDensity();
         }
       },
 
@@ -372,7 +375,11 @@ import {
       getEnterpriseQquantity(){
         getEnterpriseQquantity(({code,result})=>{
           if(code!==200) return;
-          this.chartOptions[0] = buildEnterpriseQquantityOption(result);
+          let bar = buildEnterpriseQquantityOption(result);
+          this.chartOptions = {
+            ...this.chartOptions,
+            bar
+          }
           let newLoading = this.loading.slice();
           newLoading[0] = false;
           this.loading = newLoading;
@@ -383,7 +390,11 @@ import {
     	getLatestChangeStat(){
     		getLatestChangeStat( ({success, statResult})=>{
     			if(!success) return;
-    			this.chartOptions[1] = buildLatestChangeOption(statResult);
+          let polar = buildLatestChangeOption(statResult);
+          this.chartOptions = {
+            ...this.chartOptions,
+            polar
+          }
           let newLoading = this.loading.slice();
           newLoading[1] = false;
           this.loading = newLoading;
@@ -394,7 +405,11 @@ import {
       getEnterpriseCapitalRegistration(){
         getEnterpriseCapitalRegistration(({code,result})=>{
           if(code!==200) return;
-          this.chartOptions[2] = buildEnterpriseCapitalRegistrationOption(result.pie);
+          let pie = buildEnterpriseCapitalRegistrationOption(result.pie);
+          this.chartOptions = {
+            ...this.chartOptions,
+            pie
+          }
           let newLoading = this.loading.slice();
           newLoading[2] = false;
           this.loading = newLoading;
@@ -405,7 +420,11 @@ import {
       getEnterpriseRegistrationTime(){
         getEnterpriseRegistrationTime(({code,result})=>{
           if(code!==200) return;
-          this.chartOptions[3] = buildEnterpriseRegistrationTimeOption(result);
+          let line = buildEnterpriseRegistrationTimeOption(result);
+          this.chartOptions = {
+            ...this.chartOptions,
+            line
+          }
           let newLoading = this.loading.slice();
           newLoading[3] = false;
           this.loading = newLoading;
@@ -416,7 +435,11 @@ import {
     	getRadarMap(){
     		getRadarMap( ( {data, success} )=>{
     			if(!success) return;
-    			this.chartOptions[4] =  buildChangeRadar(data);
+          let radar = buildChangeRadar(data);
+          this.chartOptions = {
+            ...this.chartOptions,
+            radar
+          }
           let newLoading = this.loading.slice();
           newLoading[4] = false;
           this.loading = newLoading;
@@ -427,7 +450,11 @@ import {
     	getMonitorDensity(){
     		getMonitorDensity( ({success, statResult,proviceCount})=>{
     				if(!success) return;
-            this.chartOptions[5] = this.mapData.monitor = buildMonitorDensityOption(statResult);
+            let map = buildMonitorDensityOption(statResult);
+            this.chartOptions = {
+              ...this.chartOptions,
+              map
+            }
             let newLoading = this.loading.slice();
             newLoading[5] = false;
             this.loading = newLoading;
@@ -438,8 +465,12 @@ import {
     	getChangeDensity(){
     		getChangeDensity( ({success, statResult,proviceCount})=>{
     				if(!success) return;
-            this.mapData.change = buildChangeDensityOption(statResult);
-            // this.loading[5] = false;
+            console.log(statResult);
+            let map = buildChangeDensityOption(statResult);
+            this.chartOptions = {
+              ...this.chartOptions,
+              map
+            }
     		} );
     	},
 
@@ -447,8 +478,12 @@ import {
     	getRiskDensity(){
     		getRiskDensity( ({success, statResult,proviceCount})=>{
     				if(!success) return;
-            this.mapData.risk = buildRiskDensityOption(statResult);
-            // this.loading[5] = false;
+              console.log(statResult);
+            let map =  buildRiskDensityOption(statResult);
+            this.chartOptions = {
+              ...this.chartOptions,
+              map
+            }
     		} );
     	}
 
@@ -545,7 +580,7 @@ section{
     }
     .widget-thumb-body-stat{
         display: block;
-        font-size: 20px;
+        font-size: 20px !important;
         font-weight: 600;
         color: #3e4f5e;
     }
